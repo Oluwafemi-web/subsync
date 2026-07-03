@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 export const SESSION_COOKIE = "subsync_session";
+export const ONBOARDING_COOKIE = "subsync_onboarding_complete";
 
 export async function getSession(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -11,3 +12,4 @@ export async function isAuthenticated(): Promise<boolean> {
   const session = await getSession();
   return Boolean(session);
 }
+

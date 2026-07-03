@@ -9,11 +9,11 @@ export interface IDashboardShellProps {
 
 export function DashboardShell({ children }: IDashboardShellProps) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen md:h-screen md:overflow-hidden">
       <Sidebar />
-      <div className="flex flex-1 flex-col pb-16 md:pb-0">
+      <div className="flex min-h-0 flex-1 flex-col pb-16 md:pb-0">
         <TopNav />
-        <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
       <MobileNav />
     </div>

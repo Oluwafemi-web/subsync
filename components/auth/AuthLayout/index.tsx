@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import type { IAuthLayoutProps } from "./@types";
 
-export function AuthLayout({ children, title, description }: IAuthLayoutProps) {
+export function AuthLayout({
+  children,
+  title,
+  description,
+  contentClassName,
+}: IAuthLayoutProps) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden flex-col justify-between overflow-hidden bg-primary p-10 text-primary-foreground lg:flex">
@@ -41,7 +47,7 @@ export function AuthLayout({ children, title, description }: IAuthLayoutProps) {
         </div>
 
         <div className="flex flex-1 items-center justify-center p-6 sm:p-10">
-          <div className="w-full max-w-sm space-y-6">
+          <div className={cn("w-full space-y-6", contentClassName ?? "max-w-sm")}>
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
               <p className="text-sm text-muted-foreground">{description}</p>

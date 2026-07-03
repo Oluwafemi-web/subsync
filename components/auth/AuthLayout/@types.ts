@@ -4,4 +4,5 @@ export interface IAuthLayoutProps {
   children: ReactNode;
   title: string;
   description: string;
+  contentClassName?: string;
 }

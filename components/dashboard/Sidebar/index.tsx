@@ -11,6 +11,7 @@ import {
   Users,
   Webhook,
 } from "lucide-react";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { cn } from "@/lib/utils";
 import type { INavItem } from "./@types";
 
@@ -28,7 +29,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex md:w-60 md:flex-col md:border-r md:bg-sidebar md:shrink-0">
+    <aside className="hidden md:flex md:h-screen md:w-60 md:shrink-0 md:flex-col md:overflow-hidden md:border-r md:bg-sidebar">
       <div className="flex h-14 items-center border-b px-5">
         <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold">
@@ -62,6 +63,9 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <div className="border-t p-3">
+        <LogoutButton variant="button" />
+      </div>
     </aside>
   );
 }

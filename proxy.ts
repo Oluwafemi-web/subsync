@@ -10,8 +10,7 @@ import { SESSION_COOKIE } from "@/lib/auth/session";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const session = request.cookies.get(SESSION_COOKIE)?.value;
-  const isAuthenticated = Boolean(session);
+  const isAuthenticated = Boolean(request.cookies.get(SESSION_COOKIE)?.value);
 
   if (pathname === "/") {
     const destination = isAuthenticated
@@ -34,5 +33,11 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/signup", "/dashboard/:path*"],
+  matcher: [
+    "/",
+    "/login",
+    "/signup",
+    "/dashboard",
+    "/dashboard/:path*",
+  ],
 };

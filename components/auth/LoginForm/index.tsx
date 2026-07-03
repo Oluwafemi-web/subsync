@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { loginAction } from "@/app/actions/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,6 +25,7 @@ import type { ILoginFormProps } from "./@types";
 export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const {
     register,
@@ -39,11 +41,15 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
 
   async function onSubmit(values: TLoginFormValues) {
     setIsSubmitting(true);
+    setAuthError(null);
 
     const result = await loginAction(values, redirectTo);
 
     if (result?.error) {
-      toast.error(result.error);
+      setAuthError(result.error);
+      if (result.error !== "Invalid credentials") {
+        toast.error(result.error);
+      }
       setIsSubmitting(false);
       return;
     }
@@ -62,6 +68,11 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4 px-0 lg:px-6">
+          {authError === "Invalid credentials" && (
+            <Alert variant="destructive">
+              <AlertDescription>Invalid credentials</AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input

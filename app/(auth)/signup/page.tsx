@@ -6,6 +6,7 @@ export default function SignupPage() {
     <AuthLayout
       title="Create your account"
       description="Start accepting recurring payments in minutes"
+      contentClassName="max-w-md"
     >
       <SignupForm />
     </AuthLayout>

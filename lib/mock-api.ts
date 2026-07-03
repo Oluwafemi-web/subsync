@@ -1,3 +1,4 @@
+import type { TSignupPayload } from "@/lib/auth/schemas";
 import { delay } from "@/lib/delay";
 import activityData from "@/mocks/activity.json";
 import customersData from "@/mocks/customers.json";
@@ -50,18 +51,32 @@ export async function login(
 }
 
 export async function signup(
-  name: string,
-  email: string,
-  password: string
+  values: TSignupPayload
 ): Promise<{ success: boolean; error?: string }> {
   await delay();
-  if (!name.trim() || !email.trim() || !password) {
+  if (
+    !values.email.trim() ||
+    !values.password ||
+    !values.name.trim()
+  ) {
     return { success: false, error: "All fields are required" };
   }
-  if (password.length < 8) {
+  if (values.password.length < 8) {
     return { success: false, error: "Password must be at least 8 characters" };
   }
-  if (email === "demo@subsync.ng") {
+  if (
+    !values.nomba_client_id.trim() ||
+    !values.nomba_client_secret.trim()
+  ) {
+    return { success: false, error: "Nomba API credentials are required" };
+  }
+  if (!values.nomba_account_id.trim()) {
+    return { success: false, error: "Nomba account ID is required" };
+  }
+  if (!values.nomba_webhook_secret.trim()) {
+    return { success: false, error: "Nomba webhook secret is required" };
+  }
+  if (values.email === "demo@subsync.ng") {
     return { success: false, error: "An account with this email already exists" };
   }
   return { success: true };

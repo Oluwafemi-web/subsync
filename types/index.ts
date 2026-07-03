@@ -182,11 +182,14 @@ export interface IDunningStep {
   enabled: boolean;
 }
 
+export type TNombaEnv = "sandbox" | "production";
+
 export interface INombaCredentials {
   accountId: string;
   clientId: string;
   clientSecret: string;
   subAccountId?: string;
+  env: TNombaEnv;
 }
 
 export interface ISettings {

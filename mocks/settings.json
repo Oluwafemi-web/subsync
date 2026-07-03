@@ -13,7 +13,8 @@
     "accountId": "nomba_acc_****1234",
     "clientId": "client_****abcd",
     "clientSecret": "secret_****wxyz",
-    "subAccountId": "sub_****5678"
+    "subAccountId": "sub_****5678",
+    "env": "production"
   },
   "apiKey": "sk_live_****f8a2b3c4d5e6",
   "webhookUrl": "https://api.subsync.ng/webhooks/merch_01",
