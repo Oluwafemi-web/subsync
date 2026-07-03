@@ -1,0 +1,7 @@
+[
+  { "state": "active", "count": 285 },
+  { "state": "trialing", "count": 32 },
+  { "state": "past_due", "count": 12 },
+  { "state": "paused", "count": 8 },
+  { "state": "canceled", "count": 45 }
+]

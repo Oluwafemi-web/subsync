@@ -1,0 +1,51 @@
+{
+  "merchant": {
+    "id": "merch_01",
+    "name": "Acme SaaS Ltd",
+    "email": "billing@acmesaas.ng",
+    "website": "https://acmesaas.ng",
+    "logoUrl": "",
+    "brandColor": "#2563eb",
+    "billingEmail": "billing@acmesaas.ng",
+    "onboardingComplete": true
+  },
+  "nomba": {
+    "accountId": "nomba_acc_****1234",
+    "clientId": "client_****abcd",
+    "clientSecret": "secret_****wxyz",
+    "subAccountId": "sub_****5678"
+  },
+  "apiKey": "sk_live_****f8a2b3c4d5e6",
+  "webhookUrl": "https://api.subsync.ng/webhooks/merch_01",
+  "webhookSecret": "whsec_****9k2m",
+  "dunningSteps": [
+    {
+      "id": "dun_1",
+      "day": 1,
+      "action": "Send payment reminder email",
+      "emailTemplate": "payment_reminder_1",
+      "enabled": true
+    },
+    {
+      "id": "dun_2",
+      "day": 3,
+      "action": "Send urgent payment notice",
+      "emailTemplate": "payment_reminder_2",
+      "enabled": true
+    },
+    {
+      "id": "dun_3",
+      "day": 7,
+      "action": "Pause subscription",
+      "emailTemplate": "subscription_paused",
+      "enabled": true
+    },
+    {
+      "id": "dun_4",
+      "day": 14,
+      "action": "Cancel subscription",
+      "emailTemplate": "subscription_canceled",
+      "enabled": false
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "tr_001",
+    "fromState": null,
+    "toState": "trialing",
+    "reason": "Subscription created with 14-day trial",
+    "createdAt": "2026-07-01T08:42:00Z"
+  },
+  {
+    "id": "tr_002",
+    "fromState": "trialing",
+    "toState": "active",
+    "reason": "Trial converted to paid",
+    "createdAt": "2026-06-15T10:00:00Z"
+  },
+  {
+    "id": "tr_003",
+    "fromState": "active",
+    "toState": "past_due",
+    "reason": "Payment failed — card declined",
+    "createdAt": "2026-06-30T22:10:00Z"
+  },
+  {
+    "id": "tr_004",
+    "fromState": "active",
+    "toState": "paused",
+    "reason": "Paused by merchant request",
+    "createdAt": "2026-06-29T16:45:00Z"
+  },
+  {
+    "id": "tr_005",
+    "fromState": "active",
+    "toState": "canceled",
+    "reason": "Canceled at end of billing period",
+    "createdAt": "2026-06-30T14:05:00Z"
+  }
+]

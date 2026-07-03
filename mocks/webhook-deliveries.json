@@ -1,0 +1,57 @@
+[
+  {
+    "id": "del_001",
+    "endpointId": "wh_001",
+    "eventType": "payment.failed",
+    "httpStatus": 500,
+    "attempt": 3,
+    "duration": 1240,
+    "requestBody": "{\"event\":\"payment.failed\",\"data\":{\"invoice_id\":\"inv_0041\"}}",
+    "responseBody": "{\"error\":\"Internal Server Error\"}",
+    "createdAt": "2026-06-29T03:15:00Z"
+  },
+  {
+    "id": "del_002",
+    "endpointId": "wh_001",
+    "eventType": "payment.failed",
+    "httpStatus": 500,
+    "attempt": 2,
+    "duration": 980,
+    "requestBody": "{\"event\":\"payment.failed\",\"data\":{\"invoice_id\":\"inv_0041\"}}",
+    "responseBody": "{\"error\":\"Internal Server Error\"}",
+    "createdAt": "2026-06-29T02:45:00Z"
+  },
+  {
+    "id": "del_003",
+    "endpointId": "wh_001",
+    "eventType": "payment.failed",
+    "httpStatus": 500,
+    "attempt": 1,
+    "duration": 1100,
+    "requestBody": "{\"event\":\"payment.failed\",\"data\":{\"invoice_id\":\"inv_0041\"}}",
+    "responseBody": "{\"error\":\"Internal Server Error\"}",
+    "createdAt": "2026-06-29T02:15:00Z"
+  },
+  {
+    "id": "del_004",
+    "endpointId": "wh_002",
+    "eventType": "invoice.paid",
+    "httpStatus": 200,
+    "attempt": 1,
+    "duration": 320,
+    "requestBody": "{\"event\":\"invoice.paid\",\"data\":{\"invoice_id\":\"inv_0042\"}}",
+    "responseBody": "{\"received\":true}",
+    "createdAt": "2026-07-01T09:15:00Z"
+  },
+  {
+    "id": "del_005",
+    "endpointId": "wh_002",
+    "eventType": "payment.succeeded",
+    "httpStatus": 200,
+    "attempt": 1,
+    "duration": 285,
+    "requestBody": "{\"event\":\"payment.succeeded\",\"data\":{\"amount\":15000}}",
+    "responseBody": "{\"received\":true}",
+    "createdAt": "2026-06-30T11:20:00Z"
+  }
+]

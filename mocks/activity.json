@@ -1,0 +1,92 @@
+[
+  {
+    "id": "act_01",
+    "type": "payment_succeeded",
+    "title": "Payment received",
+    "description": "₦15,000 from Chidi Okafor",
+    "entityId": "inv_0042",
+    "entityType": "invoice",
+    "createdAt": "2026-07-01T09:15:00Z"
+  },
+  {
+    "id": "act_02",
+    "type": "subscription_created",
+    "title": "New subscription",
+    "description": "Pro Plan — Amaka Nwosu",
+    "entityId": "sub_0189",
+    "entityType": "subscription",
+    "createdAt": "2026-07-01T08:42:00Z"
+  },
+  {
+    "id": "act_03",
+    "type": "payment_failed",
+    "title": "Payment failed",
+    "description": "₦8,500 from Tunde Bakare — card declined",
+    "entityId": "inv_0041",
+    "entityType": "invoice",
+    "createdAt": "2026-06-30T22:10:00Z"
+  },
+  {
+    "id": "act_04",
+    "type": "customer_created",
+    "title": "New customer",
+    "description": "Folake Adeyemi joined",
+    "entityId": "cus_0088",
+    "entityType": "customer",
+    "createdAt": "2026-06-30T18:30:00Z"
+  },
+  {
+    "id": "act_05",
+    "type": "subscription_canceled",
+    "title": "Subscription canceled",
+    "description": "Basic Plan — Emeka Obi",
+    "entityId": "sub_0156",
+    "entityType": "subscription",
+    "createdAt": "2026-06-30T14:05:00Z"
+  },
+  {
+    "id": "act_06",
+    "type": "invoice_paid",
+    "title": "Invoice paid",
+    "description": "INV-2026-0039 — ₦25,000",
+    "entityId": "inv_0039",
+    "entityType": "invoice",
+    "createdAt": "2026-06-30T11:20:00Z"
+  },
+  {
+    "id": "act_07",
+    "type": "subscription_paused",
+    "title": "Subscription paused",
+    "description": "Enterprise Plan — Lagos Tech Hub",
+    "entityId": "sub_0142",
+    "entityType": "subscription",
+    "createdAt": "2026-06-29T16:45:00Z"
+  },
+  {
+    "id": "act_08",
+    "type": "plan_created",
+    "title": "Plan created",
+    "description": "Annual Pro — ₦120,000/yr",
+    "entityId": "plan_004",
+    "entityType": "plan",
+    "createdAt": "2026-06-29T10:00:00Z"
+  },
+  {
+    "id": "act_09",
+    "type": "payment_succeeded",
+    "title": "Payment received",
+    "description": "₦50,000 from Lagos Tech Hub",
+    "entityId": "inv_0038",
+    "entityType": "invoice",
+    "createdAt": "2026-06-28T09:30:00Z"
+  },
+  {
+    "id": "act_10",
+    "type": "subscription_created",
+    "title": "New subscription",
+    "description": "Basic Plan — Ibrahim Musa",
+    "entityId": "sub_0185",
+    "entityType": "subscription",
+    "createdAt": "2026-06-27T15:22:00Z"
+  }
+]

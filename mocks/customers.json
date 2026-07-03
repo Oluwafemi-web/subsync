@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cus_0085",
+    "name": "Amaka Nwosu",
+    "email": "amaka@startup.ng",
+    "phone": "+234 801 234 5678",
+    "activeSubscriptions": 1,
+    "totalPaid": 0,
+    "joinedAt": "2026-07-01T08:42:00Z"
+  },
+  {
+    "id": "cus_0084",
+    "name": "Chidi Okafor",
+    "email": "chidi@techco.ng",
+    "phone": "+234 802 345 6789",
+    "activeSubscriptions": 1,
+    "totalPaid": 90000,
+    "joinedAt": "2026-05-15T10:00:00Z"
+  },
+  {
+    "id": "cus_0083",
+    "name": "Tunde Bakare",
+    "email": "tunde@agency.ng",
+    "phone": "+234 803 456 7890",
+    "activeSubscriptions": 1,
+    "totalPaid": 40000,
+    "joinedAt": "2026-03-20T14:00:00Z"
+  },
+  {
+    "id": "cus_0082",
+    "name": "Folake Adeyemi",
+    "email": "folake@design.studio",
+    "phone": "+234 804 567 8901",
+    "activeSubscriptions": 1,
+    "totalPaid": 0,
+    "joinedAt": "2026-06-30T18:30:00Z"
+  },
+  {
+    "id": "cus_0081",
+    "name": "Ibrahim Musa",
+    "email": "ibrahim@commerce.ng",
+    "activeSubscriptions": 1,
+    "totalPaid": 5000,
+    "joinedAt": "2026-06-27T15:22:00Z"
+  },
+  {
+    "id": "cus_0050",
+    "name": "Lagos Tech Hub",
+    "email": "billing@lagostechhub.ng",
+    "phone": "+234 805 678 9012",
+    "activeSubscriptions": 1,
+    "totalPaid": 550000,
+    "joinedAt": "2025-08-01T09:00:00Z"
+  },
+  {
+    "id": "cus_0062",
+    "name": "Emeka Obi",
+    "email": "emeka@freelance.ng",
+    "activeSubscriptions": 0,
+    "totalPaid": 35000,
+    "joinedAt": "2025-12-01T11:00:00Z"
+  },
+  {
+    "id": "cus_0070",
+    "name": "Ngozi Eze",
+    "email": "ngozi@healthplus.ng",
+    "phone": "+234 806 789 0123",
+    "activeSubscriptions": 1,
+    "totalPaid": 90000,
+    "joinedAt": "2026-01-10T08:00:00Z"
+  }
+]

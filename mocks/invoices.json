@@ -1,0 +1,122 @@
+[
+  {
+    "id": "inv_0042",
+    "number": "INV-2026-0042",
+    "customerId": "cus_0084",
+    "customerName": "Chidi Okafor",
+    "customerEmail": "chidi@techco.ng",
+    "subscriptionId": "sub_0188",
+    "status": "paid",
+    "amount": 15000,
+    "currency": "NGN",
+    "dueDate": "2026-07-15T00:00:00Z",
+    "paidAt": "2026-07-01T09:15:00Z",
+    "lineItems": [
+      {
+        "description": "Pro Plan — Jul 2026",
+        "quantity": 1,
+        "unitPrice": 15000,
+        "amount": 15000
+      }
+    ],
+    "createdAt": "2026-07-01T00:00:00Z"
+  },
+  {
+    "id": "inv_0041",
+    "number": "INV-2026-0041",
+    "customerId": "cus_0083",
+    "customerName": "Tunde Bakare",
+    "customerEmail": "tunde@agency.ng",
+    "subscriptionId": "sub_0187",
+    "status": "open",
+    "amount": 8500,
+    "currency": "NGN",
+    "dueDate": "2026-07-05T00:00:00Z",
+    "lineItems": [
+      {
+        "description": "Basic Plan — Jul 2026",
+        "quantity": 1,
+        "unitPrice": 5000,
+        "amount": 5000
+      },
+      {
+        "description": "Late payment fee",
+        "quantity": 1,
+        "unitPrice": 3500,
+        "amount": 3500
+      }
+    ],
+    "createdAt": "2026-06-30T00:00:00Z"
+  },
+  {
+    "id": "inv_0040",
+    "number": "INV-2026-0040",
+    "customerId": "cus_0085",
+    "customerName": "Amaka Nwosu",
+    "customerEmail": "amaka@startup.ng",
+    "subscriptionId": "sub_0189",
+    "status": "draft",
+    "amount": 0,
+    "currency": "NGN",
+    "dueDate": "2026-07-15T00:00:00Z",
+    "lineItems": [
+      {
+        "description": "Pro Plan — Trial period",
+        "quantity": 1,
+        "unitPrice": 0,
+        "amount": 0
+      }
+    ],
+    "createdAt": "2026-07-01T08:42:00Z"
+  },
+  {
+    "id": "inv_0039",
+    "number": "INV-2026-0039",
+    "customerId": "cus_0070",
+    "customerName": "Ngozi Eze",
+    "customerEmail": "ngozi@healthplus.ng",
+    "subscriptionId": "sub_0170",
+    "status": "paid",
+    "amount": 25000,
+    "currency": "NGN",
+    "dueDate": "2026-06-25T00:00:00Z",
+    "paidAt": "2026-06-30T11:20:00Z",
+    "lineItems": [
+      {
+        "description": "Pro Plan — Jun 2026",
+        "quantity": 1,
+        "unitPrice": 15000,
+        "amount": 15000
+      },
+      {
+        "description": "Add-on: Extra storage",
+        "quantity": 1,
+        "unitPrice": 10000,
+        "amount": 10000
+      }
+    ],
+    "createdAt": "2026-06-10T00:00:00Z"
+  },
+  {
+    "id": "inv_0038",
+    "number": "INV-2026-0038",
+    "customerId": "cus_0050",
+    "customerName": "Lagos Tech Hub",
+    "customerEmail": "billing@lagostechhub.ng",
+    "subscriptionId": "sub_0142",
+    "status": "paid",
+    "amount": 50000,
+    "currency": "NGN",
+    "dueDate": "2026-06-20T00:00:00Z",
+    "paidAt": "2026-06-28T09:30:00Z",
+    "lineItems": [
+      {
+        "description": "Enterprise Plan — Jun 2026",
+        "quantity": 1,
+        "unitPrice": 50000,
+        "amount": 50000
+      }
+    ],
+    "createdAt": "2026-06-01T00:00:00Z"
+  }
+]

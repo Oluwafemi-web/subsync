@@ -1,0 +1,39 @@
+[
+  {
+    "id": "pm_001",
+    "customerId": "cus_0084",
+    "type": "card",
+    "brand": "Visa",
+    "last4": "4242",
+    "expiryMonth": 12,
+    "expiryYear": 2028,
+    "isDefault": true
+  },
+  {
+    "id": "pm_002",
+    "customerId": "cus_0084",
+    "type": "card",
+    "brand": "Mastercard",
+    "last4": "5555",
+    "expiryMonth": 6,
+    "expiryYear": 2027,
+    "isDefault": false
+  },
+  {
+    "id": "pm_003",
+    "customerId": "cus_0083",
+    "type": "card",
+    "brand": "Verve",
+    "last4": "1234",
+    "expiryMonth": 3,
+    "expiryYear": 2026,
+    "isDefault": true
+  },
+  {
+    "id": "pm_004",
+    "customerId": "cus_0050",
+    "type": "bank_transfer",
+    "last4": "7890",
+    "isDefault": true
+  }
+]

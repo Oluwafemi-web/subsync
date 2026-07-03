@@ -1,0 +1,37 @@
+[
+  {
+    "id": "notif_01",
+    "title": "Payment failed",
+    "message": "Invoice INV-2026-0041 failed for Tunde Bakare",
+    "read": false,
+    "createdAt": "2026-06-30T22:10:00Z"
+  },
+  {
+    "id": "notif_02",
+    "title": "New subscriber",
+    "message": "Amaka Nwosu subscribed to Pro Plan",
+    "read": false,
+    "createdAt": "2026-07-01T08:42:00Z"
+  },
+  {
+    "id": "notif_03",
+    "title": "Webhook delivery failed",
+    "message": "Endpoint https://hooks.acmesaas.ng/events returned 500",
+    "read": true,
+    "createdAt": "2026-06-29T03:15:00Z"
+  },
+  {
+    "id": "notif_04",
+    "title": "MRR milestone",
+    "message": "Monthly recurring revenue crossed ₦4.8M",
+    "read": true,
+    "createdAt": "2026-06-28T00:00:00Z"
+  },
+  {
+    "id": "notif_05",
+    "title": "Dunning recovery",
+    "message": "Chidi Okafor's payment recovered after retry",
+    "read": true,
+    "createdAt": "2026-06-27T14:30:00Z"
+  }
+]

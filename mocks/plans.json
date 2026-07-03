@@ -1,0 +1,70 @@
+[
+  {
+    "id": "plan_001",
+    "name": "Basic",
+    "description": "Essential features for small teams getting started",
+    "price": 5000,
+    "currency": "NGN",
+    "interval": "month",
+    "trialDays": 7,
+    "features": ["Up to 5 users", "10GB storage", "Email support"],
+    "status": "active",
+    "activeSubscribers": 128,
+    "createdAt": "2025-11-15T10:00:00Z"
+  },
+  {
+    "id": "plan_002",
+    "name": "Pro",
+    "description": "Advanced tools for growing businesses",
+    "price": 15000,
+    "currency": "NGN",
+    "interval": "month",
+    "trialDays": 14,
+    "features": [
+      "Up to 25 users",
+      "100GB storage",
+      "Priority support",
+      "API access",
+      "Custom integrations"
+    ],
+    "status": "active",
+    "activeSubscribers": 156,
+    "createdAt": "2025-11-15T10:00:00Z"
+  },
+  {
+    "id": "plan_003",
+    "name": "Enterprise",
+    "description": "Full platform access with dedicated support",
+    "price": 50000,
+    "currency": "NGN",
+    "interval": "month",
+    "trialDays": 0,
+    "features": [
+      "Unlimited users",
+      "1TB storage",
+      "Dedicated account manager",
+      "SLA guarantee",
+      "Custom contracts"
+    ],
+    "status": "active",
+    "activeSubscribers": 42,
+    "createdAt": "2025-12-01T08:00:00Z"
+  },
+  {
+    "id": "plan_004",
+    "name": "Annual Pro",
+    "description": "Pro plan billed annually at a discount",
+    "price": 120000,
+    "currency": "NGN",
+    "interval": "year",
+    "trialDays": 14,
+    "features": [
+      "All Pro features",
+      "2 months free",
+      "Annual billing discount"
+    ],
+    "status": "active",
+    "activeSubscribers": 16,
+    "createdAt": "2026-06-29T10:00:00Z"
+  }
+]
