@@ -43,3 +43,22 @@ export function formatBillingDate(dateString: string): string {
 export function formatDateTime(dateString: string): string {
   return format(new Date(dateString), "MMM d, yyyy h:mm a");
 }
+
+export function formatPlanInterval(
+  interval: "day" | "week" | "month" | "year" | "custom",
+  customIntervalDays?: number
+): string {
+  if (interval === "custom" && customIntervalDays) {
+    return ` / ${customIntervalDays} days`;
+  }
+
+  const units: Record<typeof interval, string> = {
+    day: "day",
+    week: "week",
+    month: "month",
+    year: "year",
+    custom: "period",
+  };
+
+  return ` / ${units[interval]}`;
+}

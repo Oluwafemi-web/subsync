@@ -1,0 +1,128 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { DataTable } from "@/components/dashboard/DataTable";
+import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { Input } from "@/components/ui/input";
+import { useSubscriptions } from "@/hooks/use-subscriptions";
+import { formatBillingDate, formatCurrency } from "@/lib/format";
+import {
+  getSubscriptionStateLabel,
+  getSubscriptionStateStyle,
+} from "@/lib/status";
+import type { ISubscription, TSubscriptionState } from "@/types";
+
+const STATE_FILTERS: Array<{ value: TSubscriptionState | ""; label: string }> = [
+  { value: "", label: "All states" },
+  { value: "active", label: "Active" },
+  { value: "trialing", label: "Trialing" },
+  { value: "past_due", label: "Past due" },
+  { value: "paused", label: "Paused" },
+  { value: "canceled", label: "Canceled" },
+];
+
+export function SubscriptionsContent() {
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [state, setState] = useState<TSubscriptionState | "">("");
+
+  const { data, isLoading } = useSubscriptions({
+    search: search || undefined,
+    state: state || undefined,
+    page: 1,
+    pageSize: 25,
+  });
+
+  const columns = [
+    {
+      key: "customer",
+      header: "Customer",
+      cell: (row: ISubscription) => (
+        <div>
+          <p className="font-medium">{row.customerName}</p>
+          <p className="text-xs text-muted-foreground">{row.customerEmail}</p>
+        </div>
+      ),
+    },
+    {
+      key: "plan",
+      header: "Plan",
+      cell: (row: ISubscription) => row.planName,
+    },
+    {
+      key: "state",
+      header: "State",
+      cell: (row: ISubscription) => (
+        <StatusBadge
+          label={getSubscriptionStateLabel(row.state)}
+          className={getSubscriptionStateStyle(row.state)}
+        />
+      ),
+    },
+    {
+      key: "mrr",
+      header: "MRR",
+      cell: (row: ISubscription) => formatCurrency(row.mrr),
+      className: "text-right",
+    },
+    {
+      key: "period",
+      header: "Current period",
+      cell: (row: ISubscription) => (
+        <span className="text-xs text-muted-foreground">
+          {formatBillingDate(row.currentPeriodStart)} –{" "}
+          {formatBillingDate(row.currentPeriodEnd)}
+        </span>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Subscriptions</h1>
+        <p className="text-sm text-muted-foreground">
+          View and manage active subscriptions
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Input
+          placeholder="Search by customer or ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="sm:max-w-xs"
+        />
+        <select
+          value={state}
+          onChange={(e) =>
+            setState(e.target.value as TSubscriptionState | "")
+          }
+          className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          {STATE_FILTERS.map((filter) => (
+            <option key={filter.value} value={filter.value}>
+              {filter.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data?.data ?? []}
+        isLoading={isLoading}
+        emptyMessage="No subscriptions match your filters"
+        rowKey={(row) => row.id}
+        onRowClick={(row) => router.push(`/dashboard/subscriptions/${row.id}`)}
+      />
+
+      {data && data.total > 0 && (
+        <p className="text-xs text-muted-foreground">
+          Showing {data.data.length} of {data.total} subscriptions
+        </p>
+      )}
+    </div>
+  );
+}
