@@ -3,10 +3,12 @@
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { logoutAction } from "@/app/actions/auth";
+import { clearAuthSessionAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { logout } from "@/lib/api/auth";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth-store";
 import type { ILogoutButtonProps } from "./@types";
 
 export function LogoutButton({
@@ -14,11 +16,14 @@ export function LogoutButton({
   className,
 }: ILogoutButtonProps) {
   const router = useRouter();
+  const clearSession = useAuthStore((state) => state.clearSession);
   const [isPending, startTransition] = useTransition();
 
   function handleLogout() {
     startTransition(async () => {
-      await logoutAction();
+      await logout();
+      clearSession();
+      await clearAuthSessionAction();
       router.push("/login");
       router.refresh();
     });

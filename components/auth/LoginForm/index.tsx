@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { loginAction } from "@/app/actions/auth";
+import { establishAuthSessionAction } from "@/app/actions/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +19,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getErrorMessage, login } from "@/lib/api/auth";
 import { loginSchema, type TLoginFormValues } from "@/lib/auth/schemas";
+import { useAuthStore } from "@/store/auth-store";
 import type { ILoginFormProps } from "./@types";
 
 export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
   const router = useRouter();
+  const setSession = useAuthStore((state) => state.setSession);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -43,19 +46,22 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
     setIsSubmitting(true);
     setAuthError(null);
 
-    const result = await loginAction(values, redirectTo);
-
-    if (result?.error) {
-      setAuthError(result.error);
-      if (result.error !== "Invalid credentials") {
-        toast.error(result.error);
+    try {
+      const session = await login(values);
+      setSession(session);
+      await establishAuthSessionAction();
+      router.push(redirectTo);
+      router.refresh();
+    } catch (error) {
+      const message = getErrorMessage(error, "Unable to sign in");
+      setAuthError(message);
+      if (message.toLowerCase().includes("invalid") || message.toLowerCase().includes("unauthorized")) {
+        setAuthError("Invalid credentials");
+      } else {
+        toast.error(message);
       }
       setIsSubmitting(false);
-      return;
     }
-
-    router.push(redirectTo);
-    router.refresh();
   }
 
   return (
@@ -71,6 +77,11 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
           {authError === "Invalid credentials" && (
             <Alert variant="destructive">
               <AlertDescription>Invalid credentials</AlertDescription>
+            </Alert>
+          )}
+          {authError && authError !== "Invalid credentials" && (
+            <Alert variant="destructive">
+              <AlertDescription>{authError}</AlertDescription>
             </Alert>
           )}
           <div className="space-y-2">
@@ -124,10 +135,6 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
             >
               Sign up
             </Link>
-          </p>
-          <p className="rounded-lg bg-muted/60 px-3 py-2 text-center text-xs text-muted-foreground">
-            Demo: <span className="font-mono">demo@subsync.ng</span> /{" "}
-            <span className="font-mono">password</span>
           </p>
         </CardFooter>
       </form>

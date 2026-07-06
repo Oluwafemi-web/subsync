@@ -26,9 +26,7 @@ export const signupNombaAccountSchema = z.object({
   nomba_account_id: z.string().min(1, "Account ID is required"),
   nomba_sub_account_id: z.string().optional(),
   nomba_env: nombaEnvSchema,
-  nomba_webhook_secret: z
-    .string()
-    .min(1, "Webhook secret is required"),
+  nomba_webhook_secret: z.string().optional(),
 });
 
 export const signupSchema = signupAccountSchema

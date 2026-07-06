@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { TBusinessDetailsValues } from "@/lib/auth/schemas";
 import {
+  AUTH_SESSION_COOKIE,
   ONBOARDING_COOKIE,
-  SESSION_COOKIE,
 } from "@/lib/auth/session";
 import { generateApiKey } from "@/lib/mock-api";
 
@@ -15,7 +15,7 @@ export async function completeOnboardingAction(
   businessDetails: TBusinessDetailsValues
 ): Promise<{ apiKey: string }> {
   const cookieStore = await cookies();
-  const session = cookieStore.get(SESSION_COOKIE)?.value;
+  const session = cookieStore.get(AUTH_SESSION_COOKIE)?.value;
 
   if (!session) {
     redirect("/login");

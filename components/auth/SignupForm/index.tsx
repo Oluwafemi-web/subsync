@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { signupAction } from "@/app/actions/auth";
+import { establishAuthSessionAction } from "@/app/actions/auth";
 import {
   Card,
   CardContent,
@@ -15,13 +15,19 @@ import { SignupProgress } from "@/components/auth/SignupProgress";
 import { SignupStepAccount } from "@/components/auth/SignupStepAccount";
 import { SignupStepApiKeys } from "@/components/auth/SignupStepApiKeys";
 import { SignupStepNombaAccount } from "@/components/auth/SignupStepNombaAccount";
-import type { TSignupPayload, TSignupNombaAccountValues } from "@/lib/auth/schemas";
+import { getErrorMessage, register } from "@/lib/api/auth";
+import type { TSignupNombaAccountValues } from "@/lib/auth/schemas";
 import { buildSignupPayload } from "@/lib/auth/signup-payload";
+import { useAuthStore } from "@/store/auth-store";
 import { useSignupStore } from "@/store/signup-store";
 import type { ISignupFormProps } from "./@types";
 
+const PENDING_API_KEY_STORAGE = "subsync_pending_api_key";
+const PENDING_WEBHOOK_URL_STORAGE = "subsync_nomba_webhook_url";
+
 export function SignupForm({ redirectTo = "/dashboard" }: ISignupFormProps) {
   const router = useRouter();
+  const setSession = useAuthStore((state) => state.setSession);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     step,
@@ -42,16 +48,21 @@ export function SignupForm({ redirectTo = "/dashboard" }: ISignupFormProps) {
       ...nombaAccount,
     });
 
-    const result = await signupAction(values, redirectTo);
-
-    if (result?.error) {
-      toast.error(result.error);
+    try {
+      const result = await register(values);
+      setSession(result.session);
+      sessionStorage.setItem(PENDING_API_KEY_STORAGE, result.apiKey);
+      sessionStorage.setItem(
+        PENDING_WEBHOOK_URL_STORAGE,
+        result.nombaWebhookUrl
+      );
+      await establishAuthSessionAction();
+      router.push(redirectTo);
+      router.refresh();
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Unable to create account"));
       setIsSubmitting(false);
-      return;
     }
-
-    router.push(redirectTo);
-    router.refresh();
   }
 
   return (

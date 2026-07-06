@@ -73,9 +73,6 @@ export async function signup(
   if (!values.nomba_account_id.trim()) {
     return { success: false, error: "Nomba account ID is required" };
   }
-  if (!values.nomba_webhook_secret.trim()) {
-    return { success: false, error: "Nomba webhook secret is required" };
-  }
   if (values.email === "demo@subsync.ng") {
     return { success: false, error: "An account with this email already exists" };
   }

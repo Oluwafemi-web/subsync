@@ -1,9 +1,11 @@
 export type TSubscriptionState =
+  | "incomplete"
   | "active"
   | "trialing"
   | "past_due"
   | "paused"
-  | "canceled";
+  | "canceled"
+  | "expired";
 
 export type TPlanInterval = "day" | "week" | "month" | "year" | "custom";
 
@@ -12,6 +14,7 @@ export type TPlanStatus = "active" | "archived";
 export type TInvoiceStatus =
   | "draft"
   | "open"
+  | "processing"
   | "paid"
   | "void"
   | "uncollectible";
@@ -27,6 +30,25 @@ export type TActivityType =
   | "invoice_paid"
   | "customer_created"
   | "plan_created";
+
+export interface IUser {
+  id: string;
+  tenantId: string;
+  email: string;
+  name: string;
+}
+
+export interface IAuthSession {
+  accessToken: string;
+  expiresAt: string;
+  user: IUser;
+}
+
+export interface IRegisterResult {
+  session: IAuthSession;
+  apiKey: string;
+  nombaWebhookUrl: string;
+}
 
 export interface IMerchant {
   id: string;

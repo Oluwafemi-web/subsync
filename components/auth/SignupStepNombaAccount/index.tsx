@@ -97,20 +97,17 @@ export function SignupStepNombaAccount({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="nomba_webhook_secret">Webhook secret</Label>
+          <Label htmlFor="nomba_webhook_secret">
+            Webhook secret{" "}
+            <span className="font-normal text-muted-foreground">(optional)</span>
+          </Label>
           <Input
             id="nomba_webhook_secret"
             type="password"
-            placeholder="NombaHackathon2026"
+            placeholder="Configure later in Settings"
             autoComplete="off"
-            aria-invalid={Boolean(errors.nomba_webhook_secret)}
             {...register("nomba_webhook_secret")}
           />
-          {errors.nomba_webhook_secret && (
-            <p className="text-xs text-destructive">
-              {errors.nomba_webhook_secret.message}
-            </p>
-          )}
         </div>
       </div>
 

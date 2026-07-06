@@ -27,6 +27,7 @@ import {
 import { getNotifications, getSettings } from "@/lib/mock-api";
 import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/store/app-store";
+import { useAuthStore } from "@/store/auth-store";
 import type { ITopNavProps } from "./@types";
 import { usePathname } from "next/navigation";
 
@@ -74,6 +75,7 @@ function getInitials(name: string): string {
 export function TopNav({ merchantName, merchantEmail }: ITopNavProps) {
   const breadcrumbs = useBreadcrumbs();
   const { notificationsOpen, setNotificationsOpen } = useAppStore();
+  const authUser = useAuthStore((state) => state.user);
 
   const { data: settings } = useQuery({
     queryKey: queryKeys.settings,
@@ -85,8 +87,10 @@ export function TopNav({ merchantName, merchantEmail }: ITopNavProps) {
     queryFn: getNotifications,
   });
 
-  const name = merchantName ?? settings?.merchant.name ?? "Merchant";
-  const email = merchantEmail ?? settings?.merchant.email ?? "";
+  const name =
+    merchantName ?? authUser?.name ?? settings?.merchant.name ?? "Merchant";
+  const email =
+    merchantEmail ?? authUser?.email ?? settings?.merchant.email ?? "";
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (

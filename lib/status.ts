@@ -6,6 +6,8 @@ import type {
 } from "@/types";
 
 const SUBSCRIPTION_STATE_STYLES: Record<TSubscriptionState, string> = {
+  incomplete:
+    "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
   active:
     "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
   trialing:
@@ -16,19 +18,25 @@ const SUBSCRIPTION_STATE_STYLES: Record<TSubscriptionState, string> = {
     "bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400",
   canceled:
     "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+  expired:
+    "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
 };
 
 const SUBSCRIPTION_STATE_LABELS: Record<TSubscriptionState, string> = {
+  incomplete: "Pending payment",
   active: "Active",
   trialing: "Trialing",
   past_due: "Past due",
   paused: "Paused",
   canceled: "Canceled",
+  expired: "Expired",
 };
 
 const INVOICE_STATUS_STYLES: Record<TInvoiceStatus, string> = {
   draft: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
   open: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400",
+  processing:
+    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   paid: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
   void: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
   uncollectible:
@@ -38,6 +46,7 @@ const INVOICE_STATUS_STYLES: Record<TInvoiceStatus, string> = {
 const INVOICE_STATUS_LABELS: Record<TInvoiceStatus, string> = {
   draft: "Draft",
   open: "Open",
+  processing: "Processing",
   paid: "Paid",
   void: "Void",
   uncollectible: "Uncollectible",

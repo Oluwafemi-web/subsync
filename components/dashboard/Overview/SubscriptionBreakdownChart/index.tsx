@@ -13,19 +13,23 @@ import type { TSubscriptionState } from "@/types";
 import type { ISubscriptionBreakdownChartProps } from "./@types";
 
 const STATE_COLORS: Record<TSubscriptionState, string> = {
+  incomplete: "var(--chart-3)",
   active: "var(--chart-1)",
   trialing: "var(--chart-2)",
   past_due: "var(--chart-3)",
   paused: "var(--chart-4)",
   canceled: "var(--chart-5)",
+  expired: "var(--chart-5)",
 };
 
 const STATE_LABELS: Record<TSubscriptionState, string> = {
+  incomplete: "Pending payment",
   active: "Active",
   trialing: "Trialing",
   past_due: "Past due",
   paused: "Paused",
   canceled: "Canceled",
+  expired: "Expired",
 };
 
 function ChartTooltip({
