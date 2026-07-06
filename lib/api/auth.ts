@@ -1,8 +1,13 @@
 import type {
+  IApiConfirmPasswordOtpRequest,
+  IApiConfirmPasswordOtpResponse,
+  IApiForgotPasswordRequest,
+  IApiForgotPasswordResponse,
   IApiLoginRequest,
   IApiLoginResponse,
   IApiRegisterRequest,
   IApiRegisterResponse,
+  IApiResetPasswordRequest,
   IApiUser,
 } from "@/lib/api/@types";
 import { apiRequest, apiRequestVoid, refreshAccessToken } from "@/lib/api/client";
@@ -12,7 +17,13 @@ import {
   mapRegisterResult,
   mapUser,
 } from "@/lib/api/mappers";
-import type { TLoginFormValues, TSignupPayload } from "@/lib/auth/schemas";
+import type {
+  TForgotPasswordEmailValues,
+  TForgotPasswordOtpValues,
+  TLoginFormValues,
+  TResetPasswordValues,
+  TSignupPayload,
+} from "@/lib/auth/schemas";
 import { useAuthStore } from "@/store/auth-store";
 import type { IAuthSession, IRegisterResult, IUser } from "@/types";
 
@@ -66,6 +77,55 @@ export async function logout(): Promise<void> {
 export async function getMe(): Promise<IUser> {
   const response = await apiRequest<IApiUser>("/me");
   return mapUser(response);
+}
+
+export async function forgotPassword(
+  values: TForgotPasswordEmailValues
+): Promise<IApiForgotPasswordResponse> {
+  const body: IApiForgotPasswordRequest = { email: values.email };
+
+  return apiRequest<IApiForgotPasswordResponse>("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify(body),
+    auth: false,
+  });
+}
+
+export async function confirmPasswordOtp(
+  email: string,
+  values: TForgotPasswordOtpValues
+): Promise<string> {
+  const body: IApiConfirmPasswordOtpRequest = {
+    email,
+    otp: values.otp,
+  };
+
+  const response = await apiRequest<IApiConfirmPasswordOtpResponse>(
+    "/auth/confirm-password-otp",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+      auth: false,
+    }
+  );
+
+  return response.reset_token;
+}
+
+export async function resetPassword(
+  resetToken: string,
+  values: TResetPasswordValues
+): Promise<void> {
+  const body: IApiResetPasswordRequest = {
+    token: resetToken,
+    new_password: values.password,
+  };
+
+  await apiRequestVoid("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify(body),
+    auth: false,
+  });
 }
 
 export async function restoreSession(): Promise<IAuthSession | null> {

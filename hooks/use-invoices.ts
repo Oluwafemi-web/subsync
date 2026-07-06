@@ -1,5 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { getInvoice, getInvoices } from "@/lib/mock-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  downloadInvoicePdf,
+  getInvoice,
+  getInvoices,
+  retryInvoiceCharge,
+  voidInvoice,
+} from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
 import type { IInvoiceFilters } from "@/types";
 
@@ -17,5 +23,39 @@ export function useInvoice(id: string) {
     queryKey: queryKeys.invoices.detail(id),
     queryFn: () => getInvoice(id),
     enabled: Boolean(id),
+  });
+}
+
+export function useVoidInvoice(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => voidInvoice(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.detail(id),
+      });
+    },
+  });
+}
+
+export function useRetryInvoice(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => retryInvoiceCharge(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoices"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.detail(id),
+      });
+    },
+  });
+}
+
+export function useDownloadInvoicePdf(id: string) {
+  return useMutation({
+    mutationFn: () => downloadInvoicePdf(id),
   });
 }

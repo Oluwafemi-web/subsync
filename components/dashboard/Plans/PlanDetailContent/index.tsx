@@ -1,24 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import { MetricCard } from "@/components/dashboard/Overview/MetricCard";
+import { PlanFormDialog } from "@/components/dashboard/Plans/PlanFormDialog";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePlan, usePlanStats } from "@/hooks/use-plans";
+import { useArchivePlan, usePlan, usePlanStats } from "@/hooks/use-plans";
+import { getErrorMessage } from "@/lib/api/auth";
 import {
   formatBillingDate,
   formatCurrency,
   formatPlanInterval,
 } from "@/lib/format";
 import { getPlanStatusLabel, getPlanStatusStyle } from "@/lib/status";
+import { toast } from "sonner";
 import type { IPlanDetailContentProps } from "./@types";
 
 export function PlanDetailContent({ planId }: IPlanDetailContentProps) {
+  const router = useRouter();
+  const [editOpen, setEditOpen] = useState(false);
   const { data: plan, isLoading: planLoading } = usePlan(planId);
   const { data: stats, isLoading: statsLoading } = usePlanStats(planId);
+  const archivePlan = useArchivePlan();
 
   if (planLoading) {
     return (
@@ -61,6 +69,31 @@ export function PlanDetailContent({ planId }: IPlanDetailContentProps) {
           </div>
           <p className="text-sm text-muted-foreground">{plan.description}</p>
         </div>
+        {plan.status === "active" && (
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={archivePlan.isPending}
+              onClick={async () => {
+                try {
+                  await archivePlan.mutateAsync(planId);
+                  toast.success("Plan archived");
+                  router.push("/dashboard/plans");
+                } catch (error) {
+                  toast.error(getErrorMessage(error, "Unable to archive plan"));
+                }
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+              Archive
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -126,6 +159,13 @@ export function PlanDetailContent({ planId }: IPlanDetailContentProps) {
           </CardContent>
         </Card>
       </div>
+
+      <PlanFormDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        mode="edit"
+        plan={plan}
+      />
     </div>
   );
 }

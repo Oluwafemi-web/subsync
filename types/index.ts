@@ -160,6 +160,11 @@ export interface IWebhookDelivery {
   createdAt: string;
 }
 
+export interface IAnalyticsDateRange {
+  from: string;
+  to: string;
+}
+
 export interface IOverviewMetrics {
   mrr: number;
   mrrChangePercent: number;
@@ -251,6 +256,17 @@ export interface IPaginatedResponse<T> {
   totalPages: number;
 }
 
+export interface ICustomerFilters {
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface IPlanFilters {
+  page?: number;
+  pageSize?: number;
+}
+
 export interface ISubscriptionFilters {
   search?: string;
   state?: TSubscriptionState;
@@ -276,3 +292,53 @@ export interface IProrationEstimate {
   amount: number;
   description: string;
 }
+
+export interface ICheckoutResult {
+  subscriptionId: string;
+  invoiceId?: string | null;
+  checkoutUrl: string;
+  orderReference: string;
+  status: string;
+}
+
+export interface IPortalTokenResult {
+  token: string;
+  expiresAt?: string;
+}
+
+export interface ICreatePlanInput {
+  name: string;
+  description?: string;
+  price: number;
+  interval: TPlanInterval;
+  customIntervalDays?: number;
+  trialDays?: number;
+  features?: string[];
+}
+
+export interface IUpdatePlanInput extends ICreatePlanInput {}
+
+export interface ICreateCustomerInput {
+  name: string;
+  email: string;
+  phone?: string;
+  externalId?: string;
+}
+
+export interface IUpdateCustomerInput extends ICreateCustomerInput {}
+
+export interface ICheckoutInput {
+  customerId: string;
+  planId: string;
+  successUrl: string;
+  cancelUrl: string;
+  sendCheckoutEmail?: boolean;
+}
+
+export interface ICreateWebhookInput {
+  url: string;
+  events: string[];
+  isActive?: boolean;
+}
+
+export interface IUpdateWebhookInput extends ICreateWebhookInput {}

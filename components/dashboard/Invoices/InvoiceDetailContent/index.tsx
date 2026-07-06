@@ -1,12 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useInvoice } from "@/hooks/use-invoices";
+import {
+  useDownloadInvoicePdf,
+  useInvoice,
+  useRetryInvoice,
+  useVoidInvoice,
+} from "@/hooks/use-invoices";
+import { getErrorMessage } from "@/lib/api/auth";
 import { formatBillingDate, formatCurrency, formatDateTime } from "@/lib/format";
 import {
   getInvoiceStatusLabel,
@@ -16,6 +23,9 @@ import type { IInvoiceDetailContentProps } from "./@types";
 
 export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) {
   const { data: invoice, isLoading } = useInvoice(invoiceId);
+  const voidInvoice = useVoidInvoice(invoiceId);
+  const retryInvoice = useRetryInvoice(invoiceId);
+  const downloadPdf = useDownloadInvoicePdf(invoiceId);
 
   if (isLoading) {
     return (
@@ -42,6 +52,9 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
     );
   }
 
+  const canRetry = ["open", "processing"].includes(invoice.status);
+  const canVoid = ["open", "processing"].includes(invoice.status);
+
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-4">
@@ -63,6 +76,55 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
             />
           </div>
           <p className="text-sm text-muted-foreground">{invoice.id}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={downloadPdf.isPending}
+            onClick={() =>
+              downloadPdf.mutate(undefined, {
+                onError: (e) => toast.error(getErrorMessage(e)),
+              })
+            }
+          >
+            {downloadPdf.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            PDF
+          </Button>
+          {canRetry && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={retryInvoice.isPending}
+              onClick={() =>
+                retryInvoice.mutate(undefined, {
+                  onSuccess: () => toast.success("Retry initiated"),
+                  onError: (e) => toast.error(getErrorMessage(e)),
+                })
+              }
+            >
+              Retry charge
+            </Button>
+          )}
+          {canVoid && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={voidInvoice.isPending}
+              onClick={() =>
+                voidInvoice.mutate(undefined, {
+                  onSuccess: () => toast.success("Invoice voided"),
+                  onError: (e) => toast.error(getErrorMessage(e)),
+                })
+              }
+            >
+              Void
+            </Button>
+          )}
         </div>
       </div>
 

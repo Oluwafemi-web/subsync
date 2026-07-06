@@ -1,10 +1,15 @@
 "use client";
 
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { WebhookFormDialog } from "@/components/dashboard/Webhooks/WebhookFormDialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useWebhookDeliveries, useWebhooks } from "@/hooks/use-webhooks";
+import { useDeleteWebhook, useWebhookDeliveries, useWebhooks } from "@/hooks/use-webhooks";
+import { getErrorMessage } from "@/lib/api/auth";
 import { formatDateTime, formatRelativeOrAbsolute } from "@/lib/format";
 import {
   getWebhookDeliveryLabel,
@@ -60,10 +65,12 @@ function WebhookCard({
   webhook,
   isExpanded,
   onToggle,
+  onDelete,
 }: {
   webhook: IWebhookEndpoint;
   isExpanded: boolean;
   onToggle: () => void;
+  onDelete: () => void;
 }) {
   return (
     <Card>
@@ -78,6 +85,16 @@ function WebhookCard({
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
             <StatusBadge
               label={webhook.active ? "Active" : "Inactive"}
               className={
@@ -110,15 +127,23 @@ function WebhookCard({
 
 export function WebhooksContent() {
   const { data: webhooks, isLoading } = useWebhooks();
+  const deleteWebhook = useDeleteWebhook();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Webhooks</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage webhook endpoints and delivery logs
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Webhooks</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage webhook endpoints and delivery logs
+          </p>
+        </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="h-4 w-4" />
+          Add endpoint
+        </Button>
       </div>
 
       {isLoading ? (
@@ -137,10 +162,20 @@ export function WebhooksContent() {
               onToggle={() =>
                 setExpandedId(expandedId === webhook.id ? null : webhook.id)
               }
+              onDelete={async () => {
+                try {
+                  await deleteWebhook.mutateAsync(webhook.id);
+                  toast.success("Webhook deleted");
+                } catch (error) {
+                  toast.error(getErrorMessage(error));
+                }
+              }}
             />
           ))}
         </div>
       )}
+
+      <WebhookFormDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }

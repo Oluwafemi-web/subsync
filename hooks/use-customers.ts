@@ -1,16 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  createCustomer,
   getCustomer,
   getCustomerPaymentMethods,
-  getCustomers,
+  getCustomersPaginated,
   getCustomerStats,
-} from "@/lib/mock-api";
+  updateCustomer,
+} from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
+import type {
+  ICreateCustomerInput,
+  ICustomerFilters,
+  IUpdateCustomerInput,
+} from "@/types";
 
-export function useCustomers(search?: string) {
+export function useCustomers(filters: ICustomerFilters = {}) {
   return useQuery({
-    queryKey: queryKeys.customers.list(search),
-    queryFn: () => getCustomers(search),
+    queryKey: queryKeys.customers.list(filters as Record<string, unknown>),
+    queryFn: () => getCustomersPaginated(filters),
   });
 }
 
@@ -35,5 +42,30 @@ export function useCustomerPaymentMethods(id: string) {
     queryKey: queryKeys.customers.paymentMethods(id),
     queryFn: () => getCustomerPaymentMethods(id),
     enabled: Boolean(id),
+  });
+}
+
+export function useCreateCustomer() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: ICreateCustomerInput) => createCustomer(input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+  });
+}
+
+export function useUpdateCustomer(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: IUpdateCustomerInput) => updateCustomer(id, input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.customers.detail(id),
+      });
+    },
   });
 }

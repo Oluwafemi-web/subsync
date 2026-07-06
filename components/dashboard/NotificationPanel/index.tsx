@@ -11,7 +11,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { formatRelativeOrAbsolute } from "@/lib/format";
-import { markNotificationRead } from "@/lib/mock-api";
+import { markNotificationRead } from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import type { INotificationPanelProps } from "./@types";

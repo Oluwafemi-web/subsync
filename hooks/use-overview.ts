@@ -4,20 +4,21 @@ import {
   getRecentActivity,
   getRevenueChart,
   getSubscriptionBreakdown,
-} from "@/lib/mock-api";
+} from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
+import type { IAnalyticsDateRange } from "@/types";
 
-export function useOverviewMetrics() {
+export function useOverviewMetrics(range: IAnalyticsDateRange) {
   return useQuery({
-    queryKey: queryKeys.overview.metrics,
-    queryFn: getOverviewMetrics,
+    queryKey: queryKeys.overview.metrics(range),
+    queryFn: () => getOverviewMetrics(range),
   });
 }
 
-export function useRevenueChart() {
+export function useRevenueChart(range: IAnalyticsDateRange) {
   return useQuery({
-    queryKey: queryKeys.overview.revenue,
-    queryFn: getRevenueChart,
+    queryKey: queryKeys.overview.revenue(range),
+    queryFn: () => getRevenueChart(range),
   });
 }
 

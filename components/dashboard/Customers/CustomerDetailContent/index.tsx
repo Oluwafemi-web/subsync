@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, CreditCard } from "lucide-react";
+import { ArrowLeft, CreditCard, Pencil } from "lucide-react";
+import { useState } from "react";
+import { CustomerFormDialog } from "@/components/dashboard/Customers/CustomerFormDialog";
 import { MetricCard } from "@/components/dashboard/Overview/MetricCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +19,7 @@ import type { ICustomerDetailContentProps } from "./@types";
 export function CustomerDetailContent({
   customerId,
 }: ICustomerDetailContentProps) {
+  const [editOpen, setEditOpen] = useState(false);
   const { data: customer, isLoading } = useCustomer(customerId);
   const { data: stats, isLoading: statsLoading } = useCustomerStats(customerId);
   const { data: paymentMethods, isLoading: pmLoading } =
@@ -61,7 +64,7 @@ export function CustomerDetailContent({
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl font-semibold tracking-tight">
             {customer.name}
           </h1>
@@ -70,6 +73,10 @@ export function CustomerDetailContent({
             {customer.phone ? ` · ${customer.phone}` : ""}
           </p>
         </div>
+        <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+          <Pencil className="h-4 w-4" />
+          Edit
+        </Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -168,6 +175,18 @@ export function CustomerDetailContent({
           </CardContent>
         </Card>
       </div>
+
+      <CustomerFormDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        mode="edit"
+        customerId={customerId}
+        defaultValues={{
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
+        }}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-export const AUTH_ROUTES = ["/login", "/signup"] as const;
+export const AUTH_ROUTES = ["/login", "/signup", "/forgot-password"] as const;
 
 export const DEFAULT_AUTH_ROUTE = "/login";
 

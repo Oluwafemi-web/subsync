@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckCircle2, Loader2, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { Loader2, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { OneTimeSecretDialog } from "@/components/dashboard/OneTimeSecretDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,16 +12,45 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   useRotateApiKey,
   useSettings,
-  useVerifyNombaCredentials,
+  useUpdateGeneralSettings,
+  useUpdateNombaSettings,
 } from "@/hooks/use-settings";
+import { getErrorMessage } from "@/lib/api/auth";
+import type {
+  TGeneralSettingsValues,
+  TNombaSettingsValues,
+} from "@/lib/schemas/dashboard";
 
 export function SettingsContent() {
   const { data: settings, isLoading } = useSettings();
-  const verifyCredentials = useVerifyNombaCredentials();
+  const updateGeneral = useUpdateGeneralSettings();
+  const updateNomba = useUpdateNombaSettings();
   const rotateKey = useRotateApiKey();
-  const [verified, setVerified] = useState(false);
+  const [generalForm, setGeneralForm] = useState<TGeneralSettingsValues | null>(
+    null
+  );
+  const [nombaForm, setNombaForm] = useState<TNombaSettingsValues | null>(null);
+  const [rotatedKey, setRotatedKey] = useState<string | null>(null);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (settings) {
+      setGeneralForm({
+        name: settings.merchant.name,
+        email: settings.merchant.email,
+        website: settings.merchant.website ?? "",
+      });
+      setNombaForm({
+        clientId: settings.nomba.clientId,
+        clientSecret: settings.nomba.clientSecret,
+        accountId: settings.nomba.accountId,
+        subAccountId: settings.nomba.subAccountId,
+        env: settings.nomba.env,
+        webhookSecret: settings.webhookSecret,
+      });
+    }
+  }, [settings]);
+
+  if (isLoading || !settings || !generalForm || !nombaForm) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-32" />
@@ -30,10 +60,7 @@ export function SettingsContent() {
     );
   }
 
-  if (!settings) return null;
-
-  const { merchant, nomba, apiKey, webhookUrl, webhookSecret, dunningSteps } =
-    settings;
+  const { apiKey, webhookUrl, dunningSteps } = settings;
 
   return (
     <div className="space-y-6">
@@ -53,20 +80,48 @@ export function SettingsContent() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label>Business name</Label>
-            <Input value={merchant.name} readOnly />
+            <Input
+              value={generalForm.name}
+              onChange={(e) =>
+                setGeneralForm({ ...generalForm, name: e.target.value })
+              }
+            />
           </div>
           <div className="space-y-1.5">
             <Label>Email</Label>
-            <Input value={merchant.email} readOnly />
+            <Input
+              value={generalForm.email}
+              onChange={(e) =>
+                setGeneralForm({ ...generalForm, email: e.target.value })
+              }
+            />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 sm:col-span-2">
             <Label>Website</Label>
-            <Input value={merchant.website ?? ""} readOnly />
+            <Input
+              value={generalForm.website ?? ""}
+              onChange={(e) =>
+                setGeneralForm({ ...generalForm, website: e.target.value })
+              }
+            />
           </div>
-          <div className="space-y-1.5">
-            <Label>Billing email</Label>
-            <Input value={merchant.billingEmail ?? ""} readOnly />
-          </div>
+          <Button
+            className="sm:col-span-2 sm:w-fit"
+            disabled={updateGeneral.isPending}
+            onClick={async () => {
+              try {
+                await updateGeneral.mutateAsync(generalForm);
+                toast.success("Profile updated");
+              } catch (error) {
+                toast.error(getErrorMessage(error));
+              }
+            }}
+          >
+            {updateGeneral.isPending && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
+            Save profile
+          </Button>
         </CardContent>
       </Card>
 
@@ -80,52 +135,76 @@ export function SettingsContent() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label>Account ID</Label>
-              <Input value={nomba.accountId} readOnly />
+              <Input
+                value={nombaForm.accountId}
+                onChange={(e) =>
+                  setNombaForm({ ...nombaForm, accountId: e.target.value })
+                }
+              />
             </div>
             <div className="space-y-1.5">
               <Label>Environment</Label>
-              <Input value={nomba.env} readOnly className="capitalize" />
+              <select
+                value={nombaForm.env}
+                onChange={(e) =>
+                  setNombaForm({
+                    ...nombaForm,
+                    env: e.target.value as TNombaSettingsValues["env"],
+                  })
+                }
+                className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm"
+              >
+                <option value="sandbox">Sandbox</option>
+                <option value="production">Production</option>
+              </select>
             </div>
             <div className="space-y-1.5">
               <Label>Client ID</Label>
-              <Input value={nomba.clientId} readOnly />
+              <Input
+                value={nombaForm.clientId}
+                onChange={(e) =>
+                  setNombaForm({ ...nombaForm, clientId: e.target.value })
+                }
+              />
             </div>
             <div className="space-y-1.5">
               <Label>Client secret</Label>
-              <Input value={nomba.clientSecret} readOnly type="password" />
+              <Input
+                type="password"
+                value={nombaForm.clientSecret}
+                onChange={(e) =>
+                  setNombaForm({ ...nombaForm, clientSecret: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>Webhook secret</Label>
+              <Input
+                type="password"
+                value={nombaForm.webhookSecret ?? ""}
+                onChange={(e) =>
+                  setNombaForm({ ...nombaForm, webhookSecret: e.target.value })
+                }
+              />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              disabled={verifyCredentials.isPending}
-              onClick={async () => {
-                const result = await verifyCredentials.mutateAsync({
-                  accountId: nomba.accountId,
-                  clientId: nomba.clientId,
-                  clientSecret: nomba.clientSecret,
-                });
-                if (result.success) {
-                  setVerified(true);
-                  toast.success("Nomba credentials verified");
-                } else {
-                  toast.error(result.error ?? "Verification failed");
-                }
-              }}
-            >
-              {verifyCredentials.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Verify credentials"
-              )}
-            </Button>
-            {verified && (
-              <span className="flex items-center gap-1 text-sm text-emerald-600">
-                <CheckCircle2 className="h-4 w-4" />
-                Verified
-              </span>
+          <Button
+            variant="outline"
+            disabled={updateNomba.isPending}
+            onClick={async () => {
+              try {
+                await updateNomba.mutateAsync(nombaForm);
+                toast.success("Nomba settings saved");
+              } catch (error) {
+                toast.error(getErrorMessage(error));
+              }
+            }}
+          >
+            {updateNomba.isPending && (
+              <Loader2 className="h-4 w-4 animate-spin" />
             )}
-          </div>
+            Save Nomba settings
+          </Button>
         </CardContent>
       </Card>
 
@@ -142,8 +221,12 @@ export function SettingsContent() {
             variant="outline"
             disabled={rotateKey.isPending}
             onClick={async () => {
-              await rotateKey.mutateAsync();
-              toast.success("API key rotated");
+              try {
+                const key = await rotateKey.mutateAsync();
+                setRotatedKey(key);
+              } catch (error) {
+                toast.error(getErrorMessage(error));
+              }
             }}
           >
             {rotateKey.isPending ? (
@@ -158,21 +241,12 @@ export function SettingsContent() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base font-medium">Webhooks</CardTitle>
+          <CardTitle className="text-base font-medium">Inbound webhooks</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>Webhook URL</Label>
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label>Nomba webhook URL (paste into Nomba dashboard)</Label>
             <Input value={webhookUrl} readOnly className="font-mono text-xs" />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Webhook secret</Label>
-            <Input
-              value={webhookSecret}
-              readOnly
-              type="password"
-              className="font-mono text-xs"
-            />
           </div>
         </CardContent>
       </Card>
@@ -216,6 +290,15 @@ export function SettingsContent() {
           </table>
         </CardContent>
       </Card>
+
+      <OneTimeSecretDialog
+        open={Boolean(rotatedKey)}
+        onOpenChange={(open) => !open && setRotatedKey(null)}
+        title="New API key"
+        description="Copy this key now. You won't be able to see it again."
+        secret={rotatedKey ?? ""}
+        label="API key"
+      />
     </div>
   );
 }

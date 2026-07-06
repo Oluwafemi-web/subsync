@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { SubscriptionActions } from "@/components/dashboard/Subscriptions/SubscriptionActions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +75,8 @@ export function SubscriptionDetailContent({
           </p>
         </div>
       </div>
+
+      <SubscriptionActions subscription={subscription} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

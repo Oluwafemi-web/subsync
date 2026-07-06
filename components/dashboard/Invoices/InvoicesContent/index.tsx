@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { Pagination } from "@/components/dashboard/Pagination";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { useInvoices } from "@/hooks/use-invoices";
+import { DEFAULT_PAGE_SIZE } from "@/lib/api/config";
 import { formatBillingDate, formatCurrency } from "@/lib/format";
 import {
   getInvoiceStatusLabel,
@@ -14,8 +16,8 @@ import type { IInvoice, TInvoiceStatus } from "@/types";
 
 const STATUS_FILTERS: Array<{ value: TInvoiceStatus | ""; label: string }> = [
   { value: "", label: "All statuses" },
-  { value: "draft", label: "Draft" },
   { value: "open", label: "Open" },
+  { value: "processing", label: "Processing" },
   { value: "paid", label: "Paid" },
   { value: "void", label: "Void" },
   { value: "uncollectible", label: "Uncollectible" },
@@ -24,11 +26,12 @@ const STATUS_FILTERS: Array<{ value: TInvoiceStatus | ""; label: string }> = [
 export function InvoicesContent() {
   const router = useRouter();
   const [status, setStatus] = useState<TInvoiceStatus | "">("");
+  const [page, setPage] = useState(1);
 
   const { data, isLoading } = useInvoices({
     status: status || undefined,
-    page: 1,
-    pageSize: 25,
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
   });
 
   const columns = [
@@ -74,6 +77,11 @@ export function InvoicesContent() {
     },
   ];
 
+  function handleStatusChange(value: TInvoiceStatus | "") {
+    setStatus(value);
+    setPage(1);
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -85,7 +93,7 @@ export function InvoicesContent() {
 
       <select
         value={status}
-        onChange={(e) => setStatus(e.target.value as TInvoiceStatus | "")}
+        onChange={(e) => handleStatusChange(e.target.value as TInvoiceStatus | "")}
         className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         {STATUS_FILTERS.map((filter) => (
@@ -104,10 +112,14 @@ export function InvoicesContent() {
         onRowClick={(row) => router.push(`/dashboard/invoices/${row.id}`)}
       />
 
-      {data && data.total > 0 && (
-        <p className="text-xs text-muted-foreground">
-          Showing {data.data.length} of {data.total} invoices
-        </p>
+      {data && (
+        <Pagination
+          page={data.page}
+          totalPages={data.totalPages}
+          total={data.total}
+          pageSize={data.pageSize}
+          onPageChange={setPage}
+        />
       )}
     </div>
   );

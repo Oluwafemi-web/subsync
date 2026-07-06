@@ -1,24 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { ChevronRight, Plus } from "lucide-react";
+import { PlanFormDialog } from "@/components/dashboard/Plans/PlanFormDialog";
+import { Pagination } from "@/components/dashboard/Pagination";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePlans } from "@/hooks/use-plans";
+import { DEFAULT_PAGE_SIZE } from "@/lib/api/config";
 import { formatCurrency, formatPlanInterval } from "@/lib/format";
 import { getPlanStatusLabel, getPlanStatusStyle } from "@/lib/status";
 
 export function PlansContent() {
-  const { data: plans, isLoading } = usePlans();
+  const [page, setPage] = useState(1);
+  const [createOpen, setCreateOpen] = useState(false);
+  const { data, isLoading } = usePlans({ page, pageSize: DEFAULT_PAGE_SIZE });
+  const plans = data?.data ?? [];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Plans</h1>
-        <p className="text-sm text-muted-foreground">
-          Manage pricing plans and subscription tiers
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Plans</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage pricing plans and subscription tiers
+          </p>
+        </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus className="h-4 w-4" />
+          New plan
+        </Button>
       </div>
 
       {isLoading ? (
@@ -37,7 +51,7 @@ export function PlansContent() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {plans?.map((plan) => (
+          {plans.map((plan) => (
             <Link key={plan.id} href={`/dashboard/plans/${plan.id}`}>
               <Card className="h-full transition-colors hover:bg-muted/30">
                 <CardHeader className="pb-3">
@@ -79,6 +93,22 @@ export function PlansContent() {
           ))}
         </div>
       )}
+
+      {data && (
+        <Pagination
+          page={data.page}
+          totalPages={data.totalPages}
+          total={data.total}
+          pageSize={data.pageSize}
+          onPageChange={setPage}
+        />
+      )}
+
+      <PlanFormDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        mode="create"
+      />
     </div>
   );
 }

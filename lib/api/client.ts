@@ -1,4 +1,4 @@
-import type { IApiEnvelope, TApiRequestOptions } from "@/lib/api/@types";
+import type { IApiEnvelope, IApiMeta, TApiRequestOptions } from "@/lib/api/@types";
 import { ApiError } from "@/lib/api/errors";
 import { getAccessToken, useAuthStore } from "@/store/auth-store";
 
@@ -88,10 +88,10 @@ async function refreshAccessToken(): Promise<void> {
   await refreshPromise;
 }
 
-export async function apiRequest<T>(
+async function apiFetch<T>(
   path: string,
   options: TApiRequestOptions = {}
-): Promise<T> {
+): Promise<IApiEnvelope<T>> {
   const { auth = true, skipRefresh = false, headers, ...init } = options;
   const requestHeaders = new Headers(headers);
 
@@ -118,18 +118,43 @@ export async function apiRequest<T>(
 
   if (response.status === 401 && auth && !skipRefresh && path !== REFRESH_PATH) {
     await refreshAccessToken();
-    return apiRequest<T>(path, { ...options, skipRefresh: true });
+    return apiFetch<T>(path, { ...options, skipRefresh: true });
   }
 
   if (!response.ok || envelope.error) {
     throwApiError(envelope, response.status);
   }
 
+  return envelope;
+}
+
+export async function apiRequest<T>(
+  path: string,
+  options: TApiRequestOptions = {}
+): Promise<T> {
+  const envelope = await apiFetch<T>(path, options);
+
   if (envelope.data === null) {
-    throw new ApiError("empty_response", "Empty response from API", response.status);
+    throw new ApiError("empty_response", "Empty response from API", 200);
   }
 
   return envelope.data;
+}
+
+export async function apiListRequest<T>(
+  path: string,
+  options: TApiRequestOptions = {}
+): Promise<{ data: T; meta: IApiMeta }> {
+  const envelope = await apiFetch<T>(path, options);
+
+  if (envelope.data === null) {
+    throw new ApiError("empty_response", "Empty response from API", 200);
+  }
+
+  return {
+    data: envelope.data,
+    meta: envelope.meta ?? { request_id: "" },
+  };
 }
 
 export async function apiRequestVoid(

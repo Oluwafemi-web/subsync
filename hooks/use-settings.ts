@@ -2,9 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getSettings,
   rotateApiKey,
+  updateGeneralSettings,
+  updateNombaSettings,
   verifyNombaCredentials,
-} from "@/lib/mock-api";
+} from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
+import type {
+  TGeneralSettingsValues,
+  TNombaSettingsValues,
+} from "@/lib/schemas/dashboard";
 import type { INombaCredentials } from "@/types";
 
 export function useSettings() {
@@ -14,10 +20,35 @@ export function useSettings() {
   });
 }
 
+export function useUpdateGeneralSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (values: TGeneralSettingsValues) =>
+      updateGeneralSettings(values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.settings });
+    },
+  });
+}
+
+export function useUpdateNombaSettings() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (values: TNombaSettingsValues) => updateNombaSettings(values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.settings });
+    },
+  });
+}
+
 export function useVerifyNombaCredentials() {
   return useMutation({
-    mutationFn: (credentials: Pick<INombaCredentials, "accountId" | "clientId" | "clientSecret">) =>
-      verifyNombaCredentials(credentials),
+    mutationFn: (credentials: Pick<
+      INombaCredentials,
+      "accountId" | "clientId" | "clientSecret"
+    >) => verifyNombaCredentials(credentials),
   });
 }
 

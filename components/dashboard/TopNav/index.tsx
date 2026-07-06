@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getNotifications, getSettings } from "@/lib/mock-api";
+import { getNotifications, getSettings } from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/store/app-store";
 import { useAuthStore } from "@/store/auth-store";

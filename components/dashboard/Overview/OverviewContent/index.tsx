@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { ActivityFeed } from "@/components/dashboard/Overview/ActivityFeed";
+import { DateRangePicker } from "@/components/dashboard/Overview/DateRangePicker";
 import { MetricCard } from "@/components/dashboard/Overview/MetricCard";
 import { RevenueChart } from "@/components/dashboard/Overview/RevenueChart";
 import { SubscriptionBreakdownChart } from "@/components/dashboard/Overview/SubscriptionBreakdownChart";
@@ -10,22 +12,27 @@ import {
   useRevenueChart,
   useSubscriptionBreakdown,
 } from "@/hooks/use-overview";
+import { getDefaultAnalyticsDateRange } from "@/lib/analytics-date-range";
 import { formatCurrency, formatPercent } from "@/lib/format";
 
 export function OverviewContent() {
-  const { data: metrics, isLoading: metricsLoading } = useOverviewMetrics();
-  const { data: revenue, isLoading: revenueLoading } = useRevenueChart();
+  const [range, setRange] = useState(getDefaultAnalyticsDateRange);
+  const { data: metrics, isLoading: metricsLoading } = useOverviewMetrics(range);
+  const { data: revenue, isLoading: revenueLoading } = useRevenueChart(range);
   const { data: breakdown, isLoading: breakdownLoading } =
     useSubscriptionBreakdown();
   const { data: activity, isLoading: activityLoading } = useRecentActivity();
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
-        <p className="text-sm text-muted-foreground">
-          Your subscription business at a glance
-        </p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
+          <p className="text-sm text-muted-foreground">
+            Your subscription business at a glance
+          </p>
+        </div>
+        <DateRangePicker value={range} onChange={setRange} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -49,7 +56,7 @@ export function OverviewContent() {
         <MetricCard
           title="Churn rate"
           value={metrics ? `${metrics.churnRate}%` : "—"}
-          change="Last 30 days"
+          change={`${range.from} to ${range.to}`}
           isLoading={metricsLoading}
         />
         <MetricCard

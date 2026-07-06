@@ -60,7 +60,33 @@ export const nombaCredentialsSchema = nombaApiCredentialsSchema.merge(
 );
 
 export type TNombaEnv = z.infer<typeof nombaEnvSchema>;
+export const forgotPasswordEmailSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+});
+
+export const forgotPasswordOtpSchema = z.object({
+  otp: z
+    .string()
+    .min(4, "Enter the verification code")
+    .max(8, "Enter the verification code"),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export type TLoginFormValues = z.infer<typeof loginSchema>;
+export type TForgotPasswordEmailValues = z.infer<typeof forgotPasswordEmailSchema>;
+export type TForgotPasswordOtpValues = z.infer<typeof forgotPasswordOtpSchema>;
+export type TResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 export type TSignupPayload = z.infer<typeof signupSchema>;
 export type TSignupFormValues = TSignupPayload;
 export type TSignupAccountValues = z.infer<typeof signupAccountSchema>;
