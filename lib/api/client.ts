@@ -1,4 +1,5 @@
 import type { IApiEnvelope, IApiMeta, TApiRequestOptions } from "@/lib/api/@types";
+import { getNgrokSkipHeaders } from "@/lib/api/config";
 import { ApiError } from "@/lib/api/errors";
 import { getAccessToken, useAuthStore } from "@/store/auth-store";
 
@@ -27,7 +28,11 @@ function getDefaultHeaders(): Headers {
   const headers = new Headers();
   headers.set("Accept", "application/json");
   headers.set("Content-Type", "application/json");
-  headers.set("ngrok-skip-browser-warning", "true");
+
+  for (const [key, value] of Object.entries(getNgrokSkipHeaders())) {
+    headers.set(key, value);
+  }
+
   return headers;
 }
 

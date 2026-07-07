@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE_SIZE } from "@/lib/api/config";
+import { DEFAULT_PAGE_SIZE, getNgrokSkipHeaders } from "@/lib/api/config";
 import { apiListRequest, apiRequest, apiRequestVoid } from "@/lib/api/client";
 import { mapPaginatedResponse } from "@/lib/api/pagination";
 import { buildQuery } from "@/lib/api/query";
@@ -71,7 +71,7 @@ export async function downloadInvoicePdf(id: string): Promise<void> {
   const response = await fetch(`${baseUrl}/invoices/${id}/pdf`, {
     headers: {
       Authorization: token ? `Bearer ${token}` : "",
-      "ngrok-skip-browser-warning": "true",
+      ...getNgrokSkipHeaders(),
     },
     credentials: "include",
   });
