@@ -2,20 +2,33 @@
 
 import { useEffect, useState } from "react";
 import { OneTimeSecretDialog } from "@/components/dashboard/OneTimeSecretDialog";
-import { consumePendingNombaWebhookUrl } from "@/lib/auth/pending-secrets";
+import {
+  consumePendingNombaWebhookUrl,
+  hasSeenNombaWebhookPrompt,
+  markNombaWebhookPromptSeen,
+} from "@/lib/auth/pending-secrets";
+import { useAuthStore } from "@/store/auth-store";
 
 export function PendingNombaWebhookPrompt() {
+  const userId = useAuthStore((state) => state.user?.id);
   const [webhookUrl, setWebhookUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!userId || hasSeenNombaWebhookPrompt(userId)) {
+      return;
+    }
+
     setWebhookUrl(consumePendingNombaWebhookUrl());
-  }, []);
+  }, [userId]);
 
   return (
     <OneTimeSecretDialog
       open={Boolean(webhookUrl)}
       onOpenChange={(open) => {
         if (!open) {
+          if (userId) {
+            markNombaWebhookPromptSeen(userId);
+          }
           setWebhookUrl(null);
         }
       }}

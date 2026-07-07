@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { IAuthLayoutProps } from "./@types";
@@ -14,9 +15,14 @@ export function AuthLayout({
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,oklch(1_0_0/0.12),transparent_55%)]" />
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary-foreground text-primary text-xs font-bold">
-              SS
-            </div>
+            <Image
+              src="/subsync.png"
+              alt="SubSync"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-md object-contain"
+              priority
+            />
             <span className="text-lg">SubSync</span>
           </Link>
         </div>
@@ -39,9 +45,14 @@ export function AuthLayout({
       <div className="flex flex-col">
         <div className="flex items-center justify-center p-6 lg:hidden">
           <Link href="/" className="flex items-center gap-2 font-semibold">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold">
-              SS
-            </div>
+            <Image
+              src="/subsync.png"
+              alt="SubSync"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-md object-contain"
+              priority
+            />
             <span className="text-lg">SubSync</span>
           </Link>
         </div>

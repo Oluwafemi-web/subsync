@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { restoreSession } from "@/lib/api/auth";
 import { refreshAccessToken } from "@/lib/api/client";
 import { isAuthRoute } from "@/lib/auth/routes";
+import { handleAuthFailure } from "@/lib/auth/handle-auth-failure";
 import { useAuthStore } from "@/store/auth-store";
 import type { IAuthProviderProps } from "./@types";
 
@@ -66,7 +67,7 @@ export function AuthProvider({ children }: IAuthProviderProps) {
     refreshTimerRef.current = setTimeout(
       () => {
         void refreshAccessToken().catch(() => {
-          clearSession();
+          handleAuthFailure();
         });
       },
       Math.max(refreshAt, 0)

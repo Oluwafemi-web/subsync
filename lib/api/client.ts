@@ -1,6 +1,7 @@
 import type { IApiEnvelope, IApiMeta, TApiRequestOptions } from "@/lib/api/@types";
 import { getNgrokSkipHeaders } from "@/lib/api/config";
 import { ApiError } from "@/lib/api/errors";
+import { handleAuthFailure } from "@/lib/auth/handle-auth-failure";
 import { getAccessToken, useAuthStore } from "@/store/auth-store";
 
 const REFRESH_PATH = "/auth/refresh";
@@ -78,8 +79,7 @@ async function refreshAccessToken(): Promise<void> {
       }>(response);
 
       if (!response.ok || envelope.error || !envelope.data) {
-        useAuthStore.getState().clearSession();
-        throwApiError(envelope, response.status);
+        handleAuthFailure();
       }
 
       useAuthStore
@@ -124,6 +124,10 @@ async function apiFetch<T>(
   if (response.status === 401 && auth && !skipRefresh && path !== REFRESH_PATH) {
     await refreshAccessToken();
     return apiFetch<T>(path, { ...options, skipRefresh: true });
+  }
+
+  if (response.status === 401 && auth) {
+    handleAuthFailure();
   }
 
   if (!response.ok || envelope.error) {
@@ -198,6 +202,10 @@ export async function apiRequestVoid(
     await refreshAccessToken();
     await apiRequestVoid(path, { ...options, skipRefresh: true });
     return;
+  }
+
+  if (response.status === 401 && auth) {
+    handleAuthFailure();
   }
 
   if (!response.ok || envelope.error) {
