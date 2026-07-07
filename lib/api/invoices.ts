@@ -4,8 +4,31 @@ import { mapPaginatedResponse } from "@/lib/api/pagination";
 import { buildQuery } from "@/lib/api/query";
 import { mapInvoice } from "@/lib/api/resource-mappers";
 import { fetchCustomer } from "@/lib/api/customers";
-import type { IApiInvoice } from "@/lib/api/@types";
+import type { IApiInvoice, IApiInvoiceDetail } from "@/lib/api/@types";
 import type { IInvoice, IInvoiceFilters, IPaginatedResponse } from "@/types";
+
+/**
+ * The detail endpoint returns the invoice nested under `invoice` with its
+ * line items alongside (using Go-style PascalCase keys), while the list
+ * endpoint returns a flat invoice. Normalize both into a single IApiInvoice.
+ */
+function normalizeInvoiceDetail(
+  data: IApiInvoice | IApiInvoiceDetail
+): IApiInvoice {
+  if (!("invoice" in data)) {
+    return data;
+  }
+
+  return {
+    ...data.invoice,
+    line_items: (data.line_items ?? []).map((item) => ({
+      description: item.Description,
+      quantity: 1,
+      unit_price: item.Amount,
+      amount: item.Amount,
+    })),
+  };
+}
 
 export async function fetchInvoices(
   filters: IInvoiceFilters = {}
@@ -45,8 +68,10 @@ export async function fetchInvoices(
 
 export async function fetchInvoice(id: string): Promise<IInvoice | null> {
   try {
-    const data = await apiRequest<IApiInvoice>(`/invoices/${id}`);
-    const invoice = mapInvoice(data);
+    const data = await apiRequest<IApiInvoice | IApiInvoiceDetail>(
+      `/invoices/${id}`
+    );
+    const invoice = mapInvoice(normalizeInvoiceDetail(data));
 
     if (!invoice.customer && invoice.customerId) {
       const customer = await fetchCustomer(invoice.customerId);

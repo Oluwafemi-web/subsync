@@ -178,6 +178,26 @@ export interface IApiInvoiceLineItem {
   amount: number;
 }
 
+/** Line item shape returned by the invoice detail endpoint (Go-style keys). */
+export interface IApiInvoiceDetailLineItem {
+  ID: string;
+  InvoiceID?: string;
+  TenantID?: string;
+  Type?: string;
+  Description: string;
+  Amount: number;
+  Currency?: string;
+  PeriodStart?: string | null;
+  PeriodEnd?: string | null;
+  CreatedAt?: string;
+}
+
+/** Invoice detail endpoint wraps the invoice and its line items separately. */
+export interface IApiInvoiceDetail {
+  invoice: IApiInvoice;
+  line_items?: IApiInvoiceDetailLineItem[];
+}
+
 export interface IApiInvoice {
   id: string;
   tenant_id?: string;
