@@ -82,7 +82,7 @@ export function CustomerDetailContent({
       <div className="grid gap-4 sm:grid-cols-3">
         <MetricCard
           title="Active subscriptions"
-          value={stats?.activeSubscriptions.toLocaleString() ?? "—"}
+          value={stats?.activeSubscriptions?.toLocaleString() ?? "—"}
           isLoading={statsLoading}
         />
         <MetricCard
@@ -148,10 +148,17 @@ export function CustomerDetailContent({
                       <CreditCard className="h-4 w-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">
-                          {pm.type === "card"
-                            ? `${pm.brand ?? "Card"} ···· ${pm.last4}`
-                            : `Bank ···· ${pm.last4}`}
+                          {pm.type === "direct_debit"
+                            ? "Direct debit"
+                            : pm.type === "bank_transfer"
+                              ? `Bank ···· ${pm.last4 ?? "????"}`
+                              : `${pm.brand ?? "Card"} ···· ${pm.last4 ?? "????"}`}
                         </p>
+                        {pm.type === "direct_debit" && pm.mandateStatus && (
+                          <p className="text-xs text-muted-foreground">
+                            Mandate {pm.mandateStatus}
+                          </p>
+                        )}
                         {pm.expiryMonth && pm.expiryYear && (
                           <p className="text-xs text-muted-foreground">
                             Expires {pm.expiryMonth}/{pm.expiryYear}

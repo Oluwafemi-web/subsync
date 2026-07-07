@@ -317,9 +317,9 @@ export async function getInvoices(
   if (dateFrom) filtered = filtered.filter((i) => i.createdAt >= dateFrom);
   if (dateTo) filtered = filtered.filter((i) => i.createdAt <= dateTo);
   if (amountMin !== undefined)
-    filtered = filtered.filter((i) => i.amount >= amountMin);
+    filtered = filtered.filter((i) => i.amountDue >= amountMin);
   if (amountMax !== undefined)
-    filtered = filtered.filter((i) => i.amount <= amountMax);
+    filtered = filtered.filter((i) => i.amountDue <= amountMax);
 
   const total = filtered.length;
   const start = (page - 1) * pageSize;

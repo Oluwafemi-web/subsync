@@ -3,6 +3,7 @@ import { apiListRequest, apiRequest, apiRequestVoid } from "@/lib/api/client";
 import { mapPaginatedResponse } from "@/lib/api/pagination";
 import { buildQuery } from "@/lib/api/query";
 import { mapInvoice } from "@/lib/api/resource-mappers";
+import { fetchCustomer } from "@/lib/api/customers";
 import type { IApiInvoice } from "@/lib/api/@types";
 import type { IInvoice, IInvoiceFilters, IPaginatedResponse } from "@/types";
 
@@ -32,11 +33,11 @@ export async function fetchInvoices(
   }
 
   if (filters.amountMin !== undefined) {
-    mapped = mapped.filter((inv) => inv.amount >= filters.amountMin!);
+    mapped = mapped.filter((inv) => inv.amountDue >= filters.amountMin!);
   }
 
   if (filters.amountMax !== undefined) {
-    mapped = mapped.filter((inv) => inv.amount <= filters.amountMax!);
+    mapped = mapped.filter((inv) => inv.amountDue <= filters.amountMax!);
   }
 
   return mapPaginatedResponse(mapped, meta, pageSize);
@@ -45,7 +46,22 @@ export async function fetchInvoices(
 export async function fetchInvoice(id: string): Promise<IInvoice | null> {
   try {
     const data = await apiRequest<IApiInvoice>(`/invoices/${id}`);
-    return mapInvoice(data);
+    const invoice = mapInvoice(data);
+
+    if (!invoice.customer && invoice.customerId) {
+      const customer = await fetchCustomer(invoice.customerId);
+      if (customer) {
+        return {
+          ...invoice,
+          customer,
+          customerName: customer.name,
+          customerEmail: customer.email,
+          customerPhone: customer.phone,
+        };
+      }
+    }
+
+    return invoice;
   } catch {
     return null;
   }

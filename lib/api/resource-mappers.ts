@@ -25,6 +25,7 @@ import type {
   ISubscription,
   ISubscriptionTransition,
   TInvoiceStatus,
+  TPaymentMethodType,
   TPlanInterval,
   TPlanStatus,
   TSubscriptionState,
@@ -135,7 +136,7 @@ export function mapPlan(api: IApiPlan): IPlan {
 
 export function mapPlanStats(api: IApiPlanStats): IPlanStats {
   return {
-    activeSubscriptions: api.active_subscriptions,
+    activeSubscriptions: api.active_subscriptions ?? 0,
     mrr: 0,
     averageAgeDays: 0,
   };
@@ -147,6 +148,7 @@ export function mapCustomer(api: IApiCustomer): ICustomer {
     name: api.name,
     email: api.email,
     phone: api.phone,
+    externalId: api.external_id,
     activeSubscriptions: api.active_subscriptions ?? 0,
     totalPaid: fromMinorUnits(api.total_paid ?? 0),
     joinedAt: api.created_at,
@@ -175,6 +177,12 @@ export function mapSubscription(api: IApiSubscription): ISubscription {
     canceledAt: api.canceled_at ?? undefined,
     pausedUntil: api.pause_ends_at ?? api.paused_until ?? undefined,
     createdAt: api.created_at,
+    paymentMethod: api.payment_method
+      ? mapPaymentMethod(api.payment_method)
+      : undefined,
+    fallbackPaymentMethod: api.fallback_payment_method
+      ? mapPaymentMethod(api.fallback_payment_method)
+      : undefined,
   };
 }
 
@@ -202,10 +210,16 @@ function mapInvoiceLineItem(api: IApiInvoiceLineItem): IInvoiceLineItem {
 }
 
 export function mapInvoice(api: IApiInvoice): IInvoice {
+  const customer = api.customer ? mapCustomer(api.customer) : undefined;
   const customerName =
-    api.customer_name ?? api.customer?.name ?? "Unknown customer";
-  const customerEmail =
-    api.customer_email ?? api.customer?.email ?? "";
+    api.customer_name ?? customer?.name ?? "Unknown customer";
+  const customerEmail = api.customer_email ?? customer?.email ?? "";
+  const customerPhone = customer?.phone;
+
+  const amountDueMinor = api.amount_due ?? api.amount ?? 0;
+  const amountPaidMinor =
+    api.amount_paid ??
+    (api.status === "paid" ? (api.amount ?? api.amount_due ?? 0) : 0);
 
   return {
     id: api.id,
@@ -213,26 +227,74 @@ export function mapInvoice(api: IApiInvoice): IInvoice {
     customerId: api.customer_id,
     customerName,
     customerEmail,
-    subscriptionId: api.subscription_id,
+    customerPhone,
+    subscriptionId: api.subscription_id ?? api.subscription?.id,
     status: mapInvoiceStatus(api.status),
-    amount: fromMinorUnits(api.amount),
+    amountDue: fromMinorUnits(amountDueMinor),
+    amountPaid: fromMinorUnits(amountPaidMinor),
+    amountDueDisplay: api.amount_due_display,
+    amountPaidDisplay: api.amount_paid_display,
     currency: "NGN",
-    dueDate: api.due_date ?? api.created_at,
+    dueDate: api.due_date,
     paidAt: api.paid_at ?? undefined,
     lineItems: (api.line_items ?? []).map(mapInvoiceLineItem),
     createdAt: api.created_at,
+    customer,
+    subscription: api.subscription
+      ? mapSubscription(api.subscription)
+      : undefined,
+  };
+}
+
+function mapPaymentMethodType(type: string): TPaymentMethodType {
+  switch (type) {
+    case "card":
+    case "tokenized_card":
+      return "card";
+    case "direct_debit":
+      return "direct_debit";
+    case "bank_transfer":
+      return "bank_transfer";
+    default:
+      return "card";
+  }
+}
+
+/** Parse an "MM/YY" (or "MM/YYYY") expiry string into month and year. */
+function parseCardExpiry(expiry?: string): {
+  month?: number;
+  year?: number;
+} {
+  if (!expiry) {
+    return {};
+  }
+
+  const [rawMonth, rawYear] = expiry.split("/");
+  const month = Number(rawMonth);
+  const year = Number(rawYear);
+
+  if (!Number.isFinite(month) || !Number.isFinite(year)) {
+    return {};
+  }
+
+  return {
+    month,
+    year: year < 100 ? 2000 + year : year,
   };
 }
 
 export function mapPaymentMethod(api: IApiPaymentMethod): IPaymentMethod {
+  const { month, year } = parseCardExpiry(api.card_expiry);
+
   return {
     id: api.id,
     customerId: api.customer_id,
-    type: api.type === "tokenized_card" ? "card" : "card",
+    type: mapPaymentMethodType(api.type),
     brand: api.card_brand,
-    last4: api.card_last4 ?? "????",
-    expiryMonth: api.expiry_month,
-    expiryYear: api.expiry_year,
+    last4: api.card_last4,
+    expiryMonth: api.expiry_month ?? month,
+    expiryYear: api.expiry_year ?? year,
+    mandateStatus: api.mandate_status,
     isDefault: api.is_default,
   };
 }

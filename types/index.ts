@@ -94,6 +94,8 @@ export interface ISubscription {
   canceledAt?: string;
   pausedUntil?: string;
   createdAt: string;
+  paymentMethod?: IPaymentMethod;
+  fallbackPaymentMethod?: IPaymentMethod;
 }
 
 export interface ICustomer {
@@ -101,6 +103,7 @@ export interface ICustomer {
   name: string;
   email: string;
   phone?: string;
+  externalId?: string;
   activeSubscriptions: number;
   totalPaid: number;
   joinedAt: string;
@@ -119,24 +122,34 @@ export interface IInvoice {
   customerId: string;
   customerName: string;
   customerEmail: string;
+  customerPhone?: string;
   subscriptionId?: string;
   status: TInvoiceStatus;
-  amount: number;
+  amountDue: number;
+  amountPaid: number;
+  amountDueDisplay?: string;
+  amountPaidDisplay?: string;
   currency: "NGN";
-  dueDate: string;
+  dueDate?: string;
   paidAt?: string;
   lineItems: IInvoiceLineItem[];
   createdAt: string;
+  customer?: ICustomer;
+  subscription?: ISubscription;
 }
+
+export type TPaymentMethodType = "card" | "bank_transfer" | "direct_debit";
 
 export interface IPaymentMethod {
   id: string;
   customerId: string;
-  type: "card" | "bank_transfer";
+  type: TPaymentMethodType;
   brand?: string;
-  last4: string;
+  last4?: string;
   expiryMonth?: number;
   expiryYear?: number;
+  /** Present for direct debit methods (e.g. "ready", "pending"). */
+  mandateStatus?: string;
   isDefault: boolean;
 }
 

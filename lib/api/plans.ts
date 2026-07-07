@@ -55,9 +55,19 @@ export async function fetchPlan(id: string): Promise<IPlan | null> {
   }
 }
 
+const DEFAULT_PLAN_STATS: IPlanStats = {
+  activeSubscriptions: 0,
+  mrr: 0,
+  averageAgeDays: 0,
+};
+
 export async function fetchPlanStats(id: string): Promise<IPlanStats> {
-  const data = await apiRequest<IApiPlanStats>(`/plans/${id}/stats`);
-  return mapPlanStats(data);
+  try {
+    const data = await apiRequest<IApiPlanStats>(`/plans/${id}/stats`);
+    return mapPlanStats(data);
+  } catch {
+    return DEFAULT_PLAN_STATS;
+  }
 }
 
 function buildPlanBody(input: ICreatePlanInput) {

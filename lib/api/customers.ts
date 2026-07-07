@@ -13,7 +13,6 @@ import {
 import type {
   IApiCustomer,
   IApiInvoice,
-  IApiPaymentMethod,
   IApiSubscription,
 } from "@/lib/api/@types";
 import type {
@@ -83,7 +82,7 @@ export async function fetchCustomerStats(id: string): Promise<ICustomerStats> {
 
   const totalPaidMinor = (invoices.data ?? [])
     .filter((invoice) => invoice.status === "paid")
-    .reduce((sum, invoice) => sum + invoice.amount, 0);
+    .reduce((sum, invoice) => sum + (invoice.amount_paid ?? invoice.amount_due ?? 0), 0);
 
   const totalPaid = fromMinorUnits(totalPaidMinor);
 
@@ -102,18 +101,17 @@ export async function fetchCustomerPaymentMethods(
       `/customers/${customerId}/subscriptions${buildQuery({ per_page: 100 })}`
     );
 
-    const paymentMethodIds = new Set<string>();
+    const seen = new Set<string>();
     const methods: IPaymentMethod[] = [];
 
-    for (const subscription of subscriptions.data ?? []) {
-      const sub = subscription as IApiSubscription & {
-        payment_method?: IApiPaymentMethod;
-        payment_method_id?: string;
-      };
+    for (const sub of subscriptions.data ?? []) {
+      const apiMethods = [sub.payment_method, sub.fallback_payment_method];
 
-      if (sub.payment_method && !paymentMethodIds.has(sub.payment_method.id)) {
-        paymentMethodIds.add(sub.payment_method.id);
-        methods.push(mapPaymentMethod(sub.payment_method));
+      for (const apiMethod of apiMethods) {
+        if (apiMethod && !seen.has(apiMethod.id)) {
+          seen.add(apiMethod.id);
+          methods.push(mapPaymentMethod(apiMethod));
+        }
       }
     }
 

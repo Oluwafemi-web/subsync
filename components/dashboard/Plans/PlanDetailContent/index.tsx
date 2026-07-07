@@ -99,7 +99,7 @@ export function PlanDetailContent({ planId }: IPlanDetailContentProps) {
       <div className="grid gap-4 sm:grid-cols-3">
         <MetricCard
           title="Active subscriptions"
-          value={stats?.activeSubscriptions.toLocaleString() ?? "—"}
+          value={stats?.activeSubscriptions?.toLocaleString() ?? "—"}
           isLoading={statsLoading}
         />
         <MetricCard

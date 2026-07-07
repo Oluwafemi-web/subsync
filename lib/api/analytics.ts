@@ -121,7 +121,7 @@ export async function fetchRecentActivity(): Promise<IActivityEvent[]> {
       id: `act_inv_${invoice.id}`,
       type,
       title: invoice.status === "paid" ? "Invoice paid" : "Invoice updated",
-      description: `${invoice.customer_name ?? "Customer"} — ${fromMinorUnits(invoice.amount)}`,
+      description: `${invoice.customer?.name ?? invoice.customer_name ?? "Customer"} — ${invoice.amount_paid_display ?? fromMinorUnits(invoice.amount_paid ?? invoice.amount_due ?? 0)}`,
       entityId: invoice.id,
       entityType: "invoice",
       createdAt: invoice.created_at,

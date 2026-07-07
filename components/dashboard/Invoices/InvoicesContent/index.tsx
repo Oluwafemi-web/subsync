@@ -7,7 +7,7 @@ import { Pagination } from "@/components/dashboard/Pagination";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { useInvoices } from "@/hooks/use-invoices";
 import { DEFAULT_PAGE_SIZE } from "@/lib/api/config";
-import { formatBillingDate, formatCurrency } from "@/lib/format";
+import { formatBillingDate, formatInvoiceAmount } from "@/lib/format";
 import {
   getInvoiceStatusLabel,
   getInvoiceStatusStyle,
@@ -48,7 +48,14 @@ export function InvoicesContent() {
     {
       key: "customer",
       header: "Customer",
-      cell: (row: IInvoice) => row.customerName,
+      cell: (row: IInvoice) => (
+        <div>
+          <p className="font-medium">{row.customerName}</p>
+          {row.customerEmail && (
+            <p className="text-xs text-muted-foreground">{row.customerEmail}</p>
+          )}
+        </div>
+      ),
     },
     {
       key: "status",
@@ -62,16 +69,17 @@ export function InvoicesContent() {
     },
     {
       key: "amount",
-      header: "Amount",
-      cell: (row: IInvoice) => formatCurrency(row.amount),
+      header: "Amount due",
+      cell: (row: IInvoice) =>
+        formatInvoiceAmount(row.amountDue, row.amountDueDisplay),
       className: "text-right",
     },
     {
-      key: "due",
-      header: "Due date",
+      key: "created",
+      header: "Created",
       cell: (row: IInvoice) => (
         <span className="text-xs text-muted-foreground">
-          {formatBillingDate(row.dueDate)}
+          {formatBillingDate(row.createdAt)}
         </span>
       ),
     },

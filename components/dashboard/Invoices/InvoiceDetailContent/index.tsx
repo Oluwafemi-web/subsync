@@ -14,7 +14,7 @@ import {
   useVoidInvoice,
 } from "@/hooks/use-invoices";
 import { getErrorMessage } from "@/lib/api/auth";
-import { formatBillingDate, formatCurrency, formatDateTime } from "@/lib/format";
+import { formatBillingDate, formatCurrency, formatDateTime, formatInvoiceAmount } from "@/lib/format";
 import {
   getInvoiceStatusLabel,
   getInvoiceStatusStyle,
@@ -134,15 +134,6 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
             <CardTitle className="text-base font-medium">Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Customer</span>
-              <Link
-                href={`/dashboard/customers/${invoice.customerId}`}
-                className="font-medium text-primary hover:underline"
-              >
-                {invoice.customerName}
-              </Link>
-            </div>
             {invoice.subscriptionId && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subscription</span>
@@ -150,22 +141,30 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
                   href={`/dashboard/subscriptions/${invoice.subscriptionId}`}
                   className="font-medium text-primary hover:underline"
                 >
-                  {invoice.subscriptionId}
+                  {invoice.subscription?.planName ?? invoice.subscriptionId}
                 </Link>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Amount</span>
+              <span className="text-muted-foreground">Amount due</span>
               <span className="text-lg font-bold">
-                {formatCurrency(invoice.amount)}
+                {formatInvoiceAmount(invoice.amountDue, invoice.amountDueDisplay)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Due date</span>
+              <span className="text-muted-foreground">Amount paid</span>
               <span className="font-medium">
-                {formatBillingDate(invoice.dueDate)}
+                {formatInvoiceAmount(invoice.amountPaid, invoice.amountPaidDisplay)}
               </span>
             </div>
+            {invoice.dueDate && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Due date</span>
+                <span className="font-medium">
+                  {formatBillingDate(invoice.dueDate)}
+                </span>
+              </div>
+            )}
             {invoice.paidAt && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Paid at</span>
@@ -174,9 +173,58 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
                 </span>
               </div>
             )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Created</span>
+              <span className="font-medium">
+                {formatDateTime(invoice.createdAt)}
+              </span>
+            </div>
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base font-medium">Customer</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Name</span>
+              <Link
+                href={`/dashboard/customers/${invoice.customerId}`}
+                className="font-medium text-primary hover:underline"
+              >
+                {invoice.customerName}
+              </Link>
+            </div>
+            {invoice.customerEmail && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Email</span>
+                <span className="font-medium">{invoice.customerEmail}</span>
+              </div>
+            )}
+            {invoice.customerPhone && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Phone</span>
+                <span className="font-medium">{invoice.customerPhone}</span>
+              </div>
+            )}
+            {invoice.customer?.externalId && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">External ID</span>
+                <span className="font-mono text-xs">
+                  {invoice.customer.externalId}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Customer ID</span>
+              <span className="font-mono text-xs">{invoice.customerId}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {invoice.lineItems.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base font-medium">Line items</CardTitle>
@@ -204,7 +252,7 @@ export function InvoiceDetailContent({ invoiceId }: IInvoiceDetailContentProps) 
             </table>
           </CardContent>
         </Card>
-      </div>
+      )}
     </div>
   );
 }
