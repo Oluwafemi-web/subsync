@@ -16,14 +16,15 @@ import { SignupStepAccount } from "@/components/auth/SignupStepAccount";
 import { SignupStepApiKeys } from "@/components/auth/SignupStepApiKeys";
 import { SignupStepNombaAccount } from "@/components/auth/SignupStepNombaAccount";
 import { getErrorMessage, register } from "@/lib/api/auth";
+import {
+  setPendingApiKey,
+  setPendingNombaWebhookUrl,
+} from "@/lib/auth/pending-secrets";
 import type { TSignupNombaAccountValues } from "@/lib/auth/schemas";
 import { buildSignupPayload } from "@/lib/auth/signup-payload";
 import { useAuthStore } from "@/store/auth-store";
 import { useSignupStore } from "@/store/signup-store";
 import type { ISignupFormProps } from "./@types";
-
-const PENDING_API_KEY_STORAGE = "subsync_pending_api_key";
-const PENDING_WEBHOOK_URL_STORAGE = "subsync_nomba_webhook_url";
 
 export function SignupForm({ redirectTo = "/dashboard" }: ISignupFormProps) {
   const router = useRouter();
@@ -51,11 +52,8 @@ export function SignupForm({ redirectTo = "/dashboard" }: ISignupFormProps) {
     try {
       const result = await register(values);
       setSession(result.session);
-      sessionStorage.setItem(PENDING_API_KEY_STORAGE, result.apiKey);
-      sessionStorage.setItem(
-        PENDING_WEBHOOK_URL_STORAGE,
-        result.nombaWebhookUrl
-      );
+      setPendingApiKey(result.apiKey);
+      setPendingNombaWebhookUrl(result.nombaWebhookUrl);
       await establishAuthSessionAction();
       router.push(redirectTo);
       router.refresh();

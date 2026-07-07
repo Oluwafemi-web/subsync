@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "SubSync — Merchant Dashboard",
   description: "Subscription billing platform for merchants",
+  icons: {
+    icon: "/subsync.png",
+    shortcut: "/subsync.png",
+    apple: "/subsync.png",
+  },
 };
 
 export default function RootLayout({

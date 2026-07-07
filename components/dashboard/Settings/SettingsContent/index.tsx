@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { OneTimeSecretDialog } from "@/components/dashboard/OneTimeSecretDialog";
@@ -16,6 +16,7 @@ import {
   useUpdateNombaSettings,
 } from "@/hooks/use-settings";
 import { getErrorMessage } from "@/lib/api/auth";
+import { copyToClipboard } from "@/lib/checkout";
 import type {
   TGeneralSettingsValues,
   TNombaSettingsValues,
@@ -246,7 +247,25 @@ export function SettingsContent() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Nomba webhook URL (paste into Nomba dashboard)</Label>
-            <Input value={webhookUrl} readOnly className="font-mono text-xs" />
+            <div className="flex gap-2">
+              <Input
+                value={webhookUrl}
+                readOnly
+                className="font-mono text-xs"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={async () => {
+                  await copyToClipboard(webhookUrl);
+                  toast.success("Webhook URL copied");
+                }}
+                aria-label="Copy webhook URL"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

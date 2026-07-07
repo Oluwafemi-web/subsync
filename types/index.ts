@@ -44,10 +44,13 @@ export interface IAuthSession {
   user: IUser;
 }
 
-export interface IRegisterResult {
+export interface ILoginResult {
   session: IAuthSession;
-  apiKey: string;
   nombaWebhookUrl: string;
+}
+
+export interface IRegisterResult extends ILoginResult {
+  apiKey: string;
 }
 
 export interface IMerchant {

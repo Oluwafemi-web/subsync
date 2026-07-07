@@ -13,7 +13,7 @@ import type {
 import { apiRequest, apiRequestVoid, refreshAccessToken } from "@/lib/api/client";
 import { getErrorMessage } from "@/lib/api/errors";
 import {
-  mapAuthSession,
+  mapLoginResult,
   mapRegisterResult,
   mapUser,
 } from "@/lib/api/mappers";
@@ -25,7 +25,7 @@ import type {
   TSignupPayload,
 } from "@/lib/auth/schemas";
 import { useAuthStore } from "@/store/auth-store";
-import type { IAuthSession, IRegisterResult, IUser } from "@/types";
+import type { IAuthSession, ILoginResult, IRegisterResult, IUser } from "@/types";
 
 function mapSignupPayload(values: TSignupPayload): IApiRegisterRequest {
   return {
@@ -41,7 +41,7 @@ function mapSignupPayload(values: TSignupPayload): IApiRegisterRequest {
   };
 }
 
-export async function login(values: TLoginFormValues): Promise<IAuthSession> {
+export async function login(values: TLoginFormValues): Promise<ILoginResult> {
   const body: IApiLoginRequest = {
     email: values.email,
     password: values.password,
@@ -53,7 +53,7 @@ export async function login(values: TLoginFormValues): Promise<IAuthSession> {
     auth: false,
   });
 
-  return mapAuthSession(response);
+  return mapLoginResult(response);
 }
 
 export async function register(values: TSignupPayload): Promise<IRegisterResult> {

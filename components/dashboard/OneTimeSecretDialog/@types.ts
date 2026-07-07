@@ -5,4 +5,5 @@ export interface IOneTimeSecretDialogProps {
   description: string;
   secret: string;
   label?: string;
+  confirmLabel?: string;
 }

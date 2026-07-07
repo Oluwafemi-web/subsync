@@ -4,7 +4,7 @@ import type {
   IApiRegisterResponse,
   IApiUser,
 } from "@/lib/api/@types";
-import type { IAuthSession, IRegisterResult, IUser } from "@/types";
+import type { IAuthSession, ILoginResult, IRegisterResult, IUser } from "@/types";
 
 export function mapUser(apiUser: IApiUser): IUser {
   return {
@@ -25,11 +25,17 @@ export function mapAuthSession(
   };
 }
 
-export function mapRegisterResult(response: IApiRegisterResponse): IRegisterResult {
+export function mapLoginResult(response: IApiLoginResponse): ILoginResult {
   return {
     session: mapAuthSession(response),
-    apiKey: response.api_key,
     nombaWebhookUrl: response.nomba.webhook_url,
+  };
+}
+
+export function mapRegisterResult(response: IApiRegisterResponse): IRegisterResult {
+  return {
+    ...mapLoginResult(response),
+    apiKey: response.api_key,
   };
 }
 

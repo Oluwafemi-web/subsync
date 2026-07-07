@@ -42,11 +42,11 @@ export interface IApiAuthTokens {
 export interface IApiLoginResponse extends IApiAuthTokens {
   user: IApiUser;
   tenant: IApiTenant;
+  nomba: IApiNombaInfo;
 }
 
 export interface IApiRegisterResponse extends IApiLoginResponse {
   api_key: string;
-  nomba: IApiNombaInfo;
 }
 
 export type TApiPlanInterval = "monthly" | "annual" | "custom";

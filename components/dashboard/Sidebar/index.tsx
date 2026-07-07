@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -32,9 +33,14 @@ export function Sidebar() {
     <aside className="hidden md:flex md:h-screen md:w-60 md:shrink-0 md:flex-col md:overflow-hidden md:border-r md:bg-sidebar">
       <div className="flex h-14 items-center border-b px-5">
         <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-bold">
-            SS
-          </div>
+          <Image
+            src="/subsync.png"
+            alt="SubSync"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-md object-contain"
+            priority
+          />
           <span>SubSync</span>
         </Link>
       </div>

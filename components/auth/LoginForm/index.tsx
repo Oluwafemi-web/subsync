@@ -20,6 +20,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getErrorMessage, login } from "@/lib/api/auth";
+import {
+  setPendingNombaWebhookUrl,
+} from "@/lib/auth/pending-secrets";
 import { loginSchema, type TLoginFormValues } from "@/lib/auth/schemas";
 import { useAuthStore } from "@/store/auth-store";
 import type { ILoginFormProps } from "./@types";
@@ -47,8 +50,9 @@ export function LoginForm({ redirectTo = "/dashboard" }: ILoginFormProps) {
     setAuthError(null);
 
     try {
-      const session = await login(values);
-      setSession(session);
+      const result = await login(values);
+      setSession(result.session);
+      setPendingNombaWebhookUrl(result.nombaWebhookUrl);
       await establishAuthSessionAction();
       router.push(redirectTo);
       router.refresh();

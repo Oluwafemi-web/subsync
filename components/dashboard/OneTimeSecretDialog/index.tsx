@@ -23,6 +23,7 @@ export function OneTimeSecretDialog({
   description,
   secret,
   label = "Secret",
+  confirmLabel = "I've saved it",
 }: IOneTimeSecretDialogProps) {
   async function handleCopy() {
     await copyToClipboard(secret);
@@ -47,7 +48,7 @@ export function OneTimeSecretDialog({
         </div>
         <DialogFooter>
           <Button type="button" onClick={() => onOpenChange(false)}>
-            I&apos;ve saved it
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
