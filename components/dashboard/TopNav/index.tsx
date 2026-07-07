@@ -15,10 +15,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -26,8 +27,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getNotifications, getSettings } from "@/lib/data";
 import { queryKeys } from "@/lib/query-keys";
+import { useIsAuthReady } from "@/hooks/use-auth-ready";
 import { useAppStore } from "@/store/app-store";
 import { useAuthStore } from "@/store/auth-store";
+import { cn } from "@/lib/utils";
 import type { ITopNavProps } from "./@types";
 import { usePathname } from "next/navigation";
 
@@ -64,22 +67,28 @@ function useBreadcrumbs() {
 }
 
 function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
+  const initials = name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  return initials || "M";
 }
 
 export function TopNav({ merchantName, merchantEmail }: ITopNavProps) {
   const breadcrumbs = useBreadcrumbs();
   const { notificationsOpen, setNotificationsOpen } = useAppStore();
   const authUser = useAuthStore((state) => state.user);
+  const isAuthReady = useIsAuthReady();
 
   const { data: settings } = useQuery({
     queryKey: queryKeys.settings,
     queryFn: getSettings,
+    enabled: isAuthReady,
   });
 
   const { data: notifications = [] } = useQuery({
@@ -133,12 +142,10 @@ export function TopNav({ merchantName, merchantEmail }: ITopNavProps) {
 
           <DropdownMenu>
             <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                />
-              }
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon" }),
+                "rounded-full"
+              )}
             >
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-xs">
@@ -147,16 +154,18 @@ export function TopNav({ merchantName, merchantEmail }: ITopNavProps) {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{name}</p>
-                  <p className="text-xs text-muted-foreground">{email}</p>
-                </div>
-              </DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{name}</p>
+                    <p className="text-xs text-muted-foreground">{email}</p>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem render={<Link href="/dashboard/settings" />}>
-                Settings
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link href="/dashboard/settings">Settings</Link>}
+              />
               <LogoutButton />
             </DropdownMenuContent>
           </DropdownMenu>
